@@ -21,8 +21,8 @@ public final class PlayerPanel extends JPanel {
     
     // Define Variables
     private final Player player;
-    private final Table table;
     private final String name;
+    private final Table table;
     private final Timer timer;
     private long remainingTime;
     private boolean isPaused;
@@ -90,6 +90,14 @@ public final class PlayerPanel extends JPanel {
     Player getPlayer() {
         return this.player;
     }
+    
+    /**
+     * Get the name of the player
+     * @return Player
+     */
+    String getPlayerName() {
+        return this.name;
+    }
 
     private String getTimerToString() {
         long minutes = (remainingTime / 1000) / 60;
@@ -97,7 +105,7 @@ public final class PlayerPanel extends JPanel {
         return String.format("%02d:%02d", minutes, seconds);
     }
     
-    public void startTimer(GameDuration gameDuration) {
+    void startTimer(GameDuration gameDuration) {
         this.remainingTime = gameDuration.getTime();
         timerLabel.setText(getTimerToString());
         this.timer.scheduleAtFixedRate(new TimerTask() {
@@ -105,8 +113,7 @@ public final class PlayerPanel extends JPanel {
             public void run() {
                 if (table.getGameBoard().getCurrentPlayer().getAlliance().equals(player.getAlliance())) 
                     resumeTimer();
-                else    
-                    pauseTimer();
+                else   pauseTimer();
                 
                 if (!isPaused && remainingTime > 0) {
                     remainingTime -= 1000;
@@ -117,20 +124,19 @@ public final class PlayerPanel extends JPanel {
                     timerLabel.setText(getTimerToString());
                     
                     // Check for winner
-                    table.winner = table.getGameBoard().getCurrentPlayer().getOpponent();
-                    if (table.winner.getAlliance().isWhite()) {
+                    if (table.getGameBoard().getCurrentPlayer().getOpponent().getAlliance().isWhite()) {
                         table.status = Table.Status.WHITE_PLAYER_WIN;
                     }
                     else {
                         table.status = Table.Status.BLACK_PLAYER_WIN;
                     }
+                    
                     table.getBoardPanel().disableBoard();
                 }
             }
         }, 0, 1000);
         pauseTimer();
     }
-    
     
     void stopTimer() {
         this.timer.cancel();

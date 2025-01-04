@@ -139,23 +139,26 @@ final class TilePanelSystem implements MouseListener {
         
         // Check if current player has no pieces
         if (getGameBoard().getCurrentPlayer().isLooser()) {
-            getTable().winner = getGameBoard().getCurrentPlayer().getOpponent();
-            
-            if (getTable().winner.getAlliance().isWhite()) {
+            if (getTable().getGameBoard().getCurrentPlayer().getOpponent().getAlliance().isWhite()) {
                 getTable().status = Table.Status.WHITE_PLAYER_WIN;
             }
             else {
                 getTable().status = Table.Status.BLACK_PLAYER_WIN;
             }
             
+            getTable().stopPlayerTimer();
             getBoardPanel().disableBoard();
+            
+            getDragGlassPane().showGameEnd(getTable().status, getTable());
         }
         // Check if current player has no moves
         else if (getGameBoard().getCurrentPlayer().isStalemate()) {
-            getTable().winner = getGameBoard().getCurrentPlayer().getOpponent();
             getTable().status = Table.Status.STALEMATE;
             
+            getTable().stopPlayerTimer();
             getBoardPanel().disableBoard();
+            
+            getDragGlassPane().showGameEnd(getTable().status, getTable());
         }
         // Flip board game play
         else if (GameInfo.isChangingTurn) {

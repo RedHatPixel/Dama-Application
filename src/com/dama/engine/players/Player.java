@@ -65,7 +65,7 @@ public abstract class Player {
      * @return Boolean
      */
     public boolean isLooser() {
-        return !this.getActivePieces().isEmpty();
+        return this.getActivePieces().isEmpty();
     }
     
     /**

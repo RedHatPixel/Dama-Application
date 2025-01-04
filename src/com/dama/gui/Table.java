@@ -2,9 +2,7 @@ package com.dama.gui;
 
 import com.dama.engine.board.Board;
 import com.dama.engine.board.Tile;
-import com.dama.engine.dependencies.Alliance;
 import com.dama.engine.pieces.Piece;
-import com.dama.engine.players.Player;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -30,7 +28,6 @@ public final class Table extends JPanel {
     Tile sourceTile;
     Tile destinationTile;
     Piece selectedPiece;
-    Player winner;
     Status status;
 
     public Table() {
@@ -91,7 +88,7 @@ public final class Table extends JPanel {
         gridBagConstraints.gridwidth = 1;
         gridBagConstraints.gridheight = 1;
         gridBagConstraints.fill = GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = GridBagConstraints.PAGE_START;
+        gridBagConstraints.anchor = GridBagConstraints.EAST;
         add(topPlayer, gridBagConstraints);
 
         gridBagConstraints = new GridBagConstraints();
@@ -102,7 +99,7 @@ public final class Table extends JPanel {
         gridBagConstraints.gridwidth = 1;
         gridBagConstraints.gridheight = 1;
         gridBagConstraints.fill = GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = GridBagConstraints.PAGE_END;
+        gridBagConstraints.anchor = GridBagConstraints.NORTH;
         add(bottomPlayer, gridBagConstraints);
     }
     
@@ -124,6 +121,13 @@ public final class Table extends JPanel {
         return this.boardPanel;
     }
     
+    PlayerPanel getTopPlayerPanel() {
+        return this.topPlayerPanel;
+    }
+    
+    PlayerPanel getBottomPlayerPanel() {
+        return this.bottomPlayerPanel;
+    }
     /**
      * Set the game engine of the Game
      * USED: to set a new line of boards by Board.builder()  -> same package only
@@ -145,6 +149,15 @@ public final class Table extends JPanel {
             addComponents(this.bottomPlayerPanel, this.topPlayerPanel);
         revalidate();
         repaint();
+    }
+    
+    /**
+     * Stop Timer function when game ends
+     * USED: for the system(TilePanel) only -> same package only
+     */
+    void stopPlayerTimer() {
+        this.topPlayerPanel.stopTimer();
+        this.bottomPlayerPanel.stopTimer();
     }
     
     public static enum Status {
@@ -179,7 +192,6 @@ public final class Table extends JPanel {
         int totalWidth = (int) (size * 0.8);
         int offSetX = x + ((width + ((int) (size * 0.2))) - size) / 2;
         int offSetY = y + (height - size) / 2;
-        
         super.setBounds(offSetX, offSetY, totalWidth, size);
     }
 }

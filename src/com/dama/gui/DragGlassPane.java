@@ -1,10 +1,20 @@
 package com.dama.gui;
 
+import com.dama.gui.Table.Status;
+import utilities.FontManager;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
+
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+
+
 
 // Inner Class: DragGlassPane for overlaying dragged icons
 final class DragGlassPane extends JPanel {
@@ -25,13 +35,38 @@ final class DragGlassPane extends JPanel {
     
     // Configurations: Display the Drag Icon designs
     private void initComponents() {
-        setLayout(null);
+        setLayout(new BorderLayout());
         setBorder(null);
         setOpaque(false);
         setDoubleBuffered(true);
         validate();
         repaint();
     }
+    
+    /**
+     * Show the ending message of the game
+     * USED: for the system(TilePanel) only -> same package only
+     */
+    void showGameEnd(final Status status, final Table table) {
+        final PlayerPanel winner = status.getWinner(
+                table.getTopPlayerPanel(), table.getBottomPlayerPanel());
+        
+        final String message = winner != null ? winner.getPlayerName() + " wins" : "Game Draw";
+        
+        removeAll();
+        final JLabel title = new JLabel(message);
+        title.setHorizontalAlignment(JLabel.CENTER);
+        title.setVerticalAlignment(JLabel.CENTER);
+        title.setOpaque(false);
+        title.setForeground(Color.WHITE);
+        title.setFont(FontManager.getFont(
+                FontManager.FontName.POPPINS_BLACK, FontManager.FontType.POPPINS, 32));
+        
+        add(title, BorderLayout.CENTER);
+        revalidate();
+        repaint();
+    }
+    
     
     /**
      * Set the new location of the dragged icon
@@ -78,11 +113,23 @@ final class DragGlassPane extends JPanel {
             int x = mouseLocation.x - (draggedIcon.getIconWidth() / 2);
             int y = mouseLocation.y - (draggedIcon.getIconHeight() / 2);
             
-            // Clamp the x and y positions within the bounds of the DragGlassPane
-            Rectangle bounds = boardPanel.getBounds();
-            x = Math.max(bounds.x, Math.min(x, bounds.x + bounds.width - draggedIcon.getIconWidth()));
-            y = Math.max(bounds.y, Math.min(y, bounds.y + bounds.height - draggedIcon.getIconHeight()));
-            
+            // Convert the boardPanel's bounds to the coordinate space of the dragGlassPane
+            Rectangle boardBounds = boardPanel.getBounds();
+            Point boardLocationOnGlassPane = SwingUtilities.convertPoint(
+                boardPanel.getParent(), boardBounds.x, boardBounds.y, this);
+            Rectangle absoluteBoardBounds = new Rectangle(
+                boardLocationOnGlassPane.x, 
+                boardLocationOnGlassPane.y, 
+                boardBounds.width, 
+                boardBounds.height
+            );
+
+            // Clamp the x and y positions within the bounds of the board
+            x = Math.max(absoluteBoardBounds.x, 
+                         Math.min(x, absoluteBoardBounds.x + absoluteBoardBounds.width - draggedIcon.getIconWidth()));
+            y = Math.max(absoluteBoardBounds.y, 
+                         Math.min(y, absoluteBoardBounds.y + absoluteBoardBounds.height - draggedIcon.getIconHeight()));
+
             g.drawImage(draggedIcon.getImage(), x, y, 
                       draggedIcon.getIconWidth(), draggedIcon.getIconHeight(), null);
         }

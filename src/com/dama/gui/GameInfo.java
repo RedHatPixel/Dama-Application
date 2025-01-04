@@ -5,7 +5,7 @@ public final class GameInfo {
     
     public static String TopPlayerName = "Opponent";
     public static String BottomPlayerName = "Player";
-    public static GameDuration duration = GameDuration.NULL;
+    public static GameDuration duration = GameDuration.FIVE_MINUTES;
     public static Direction boardDirection = Direction.NORMAL;
     
     public static boolean isChangingTurn = false;
