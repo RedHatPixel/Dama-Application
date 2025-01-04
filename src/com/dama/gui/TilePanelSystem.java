@@ -55,11 +55,14 @@ final class TilePanelSystem implements MouseListener {
     private Table getTable() {
         return this.tilePanel.getBoardPanel().getTable();
     }
+    private BoardPanel getBoardPanel() {
+        return this.tilePanel.getBoardPanel();
+    }
     private Board getGameBoard() {
         return this.getTable().getGameBoard();
     }
-    private BoardPanel getBoardPanel() {
-        return this.tilePanel.getBoardPanel();
+    private DragGlassPane getDragGlassPane() {
+        return this.getBoardPanel().getDragGlassPane();
     }
     private Position getCoordinate() {
         return this.tilePanel.getCoordinate();
@@ -67,7 +70,7 @@ final class TilePanelSystem implements MouseListener {
     
     // Configurations: Select the starting point of the player move
     private void setStartingPoint() {
-        getTable().sourceTile = getTable().getGameBoard().getTile(getCoordinate()); // Set Source tile
+        getTable().sourceTile = getGameBoard().getTile(getCoordinate()); // Set Source tile
         getTable().selectedPiece = getTable().sourceTile.getPiece(); // Set Selected Piece
 
         // Check if Tile is not Occupied -> Piece == null
@@ -75,7 +78,7 @@ final class TilePanelSystem implements MouseListener {
             getTable().sourceTile = null;
         else {
             SwingUtilities.invokeLater(() -> {
-                getBoardPanel().highlightMoves(getTable().selectedPiece, getTable().getGameBoard());
+                getBoardPanel().highlightMoves(getTable().selectedPiece, getGameBoard());
             });
         }
     }
@@ -110,8 +113,10 @@ final class TilePanelSystem implements MouseListener {
         if (transition.getMoveStatus().isDone()) {
             getTable().setGameBoard(transition.getTransitionBoard());
 
+            validateMove();
+            
             // Re-select the new possible moves
-            if (getTable().getGameBoard().getLatestMove().getType().canAttackAgain()) {
+            if (getGameBoard().getLatestMove().getType().canAttackAgain()) {
                 getTable().sourceTile = getGameBoard().getTile(getCoordinate());
                 getTable().selectedPiece = getTable().sourceTile.getPiece();
                 getTable().destinationTile = null;
@@ -127,6 +132,36 @@ final class TilePanelSystem implements MouseListener {
         
         // After a move, Reset all selected tiles
         resetSelections();
+    }
+    
+    // Configurations: Check the result after a move
+    private void validateMove() {
+        
+        // Check if current player has no pieces
+        if (getGameBoard().getCurrentPlayer().isLooser()) {
+            getTable().winner = getGameBoard().getCurrentPlayer().getOpponent();
+            
+            if (getTable().winner.getAlliance().isWhite()) {
+                getTable().status = Table.Status.WHITE_PLAYER_WIN;
+            }
+            else {
+                getTable().status = Table.Status.BLACK_PLAYER_WIN;
+            }
+            
+            getBoardPanel().disableBoard();
+        }
+        // Check if current player has no moves
+        else if (getGameBoard().getCurrentPlayer().isStalemate()) {
+            getTable().winner = getGameBoard().getCurrentPlayer().getOpponent();
+            getTable().status = Table.Status.STALEMATE;
+            
+            getBoardPanel().disableBoard();
+        }
+        // Flip board game play
+        else if (GameInfo.isChangingTurn) {
+            getBoardPanel().setDirection(getBoardPanel().getCurrentDirection().opposite());
+            getTable().reversePlayer();
+        }
     }
     
     // Reset All the selected move of the player
@@ -155,23 +190,22 @@ final class TilePanelSystem implements MouseListener {
             
             // Dragging Function: Create a starting point
             if (getGameBoard().getTile(getCoordinate()).isOccupied()) {
-                setStartingPoint();
-                
                 dragTimer = new Timer(DRAG_DELAY, (_event) -> {
                     
                    // Create a Dragging Piece illusion
                     if (getTable().sourceTile != null && getTable().sourceTile.getCoordinate().equals(getCoordinate())) {
-                        getBoardPanel().getDragGlassPane().setDragging(true);
-                        getBoardPanel().getDragGlassPane().setDraggedIcon((ImageIcon) tilePanel.getPieceIcon());
-                        getBoardPanel().getDragGlassPane().setPointLocation(
+                        getDragGlassPane().setDragging(true);
+                        getDragGlassPane().setDraggedIcon((ImageIcon) tilePanel.getPieceIcon());
+                        getDragGlassPane().setPointLocation(
                                 SwingUtilities.convertPoint(tilePanel, 
-                                        e.getPoint(), getBoardPanel().getDragGlassPane()));
+                                        e.getPoint(), getDragGlassPane()));
                         tilePanel.removeTilePieceIcon();
                     }
                 });
                 dragTimer.setRepeats(false);
                 dragTimer.start();
                 
+                setStartingPoint();
             }
             // Click Function: Create a destination point
             else if (getTable().sourceTile != null) {
@@ -205,10 +239,10 @@ final class TilePanelSystem implements MouseListener {
                 createMove();
             }
             // Dropping Function: Create a destination point
-            else if (getBoardPanel().getDragGlassPane().isDragging()) {
-                getBoardPanel().getDragGlassPane().setDragging(false);
-                getBoardPanel().getDragGlassPane().setDraggedIcon(null);
-                getBoardPanel().getDragGlassPane().repaint();
+            else if (getDragGlassPane().isDragging()) {
+                getDragGlassPane().setDragging(false);
+                getDragGlassPane().setDraggedIcon(null);
+                getDragGlassPane().repaint();
                 
                 // Get the mouse target
                 Point point = SwingUtilities.convertPoint(tilePanel, e.getPoint(), getBoardPanel());

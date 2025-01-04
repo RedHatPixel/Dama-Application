@@ -1,4 +1,4 @@
-package utilities;
+package component.Panel;
 
 public interface Direction {
     

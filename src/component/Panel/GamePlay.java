@@ -1,7 +1,6 @@
 package component.Panel;
 
 import utilities.CommonConstants;
-import utilities.Direction;
 import utilities.Directory;
 
 public abstract class GamePlay extends javax.swing.JPanel implements Direction {
@@ -21,12 +20,14 @@ public abstract class GamePlay extends javax.swing.JPanel implements Direction {
     
     @Override
     public void setDirectName() {
-        this.setName(Directory.Panel.MAIN_MENU.getName());
+        this.setName(Directory.Panel.GAME_PLAY.getName());
     }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+
+        navigator = new component.Panel.subPanel.Navigator();
 
         setBackground(new java.awt.Color(48, 46, 43));
         setForeground(new java.awt.Color(255, 255, 255));
@@ -36,9 +37,12 @@ public abstract class GamePlay extends javax.swing.JPanel implements Direction {
         setName("BasePanel"); // NOI18N
         setPreferredSize(new java.awt.Dimension(950, 600));
         setLayout(new java.awt.BorderLayout());
+        add(navigator, java.awt.BorderLayout.WEST);
+
         getAccessibleContext().setAccessibleName("BasePanel");
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private component.Panel.subPanel.Navigator navigator;
     // End of variables declaration//GEN-END:variables
 }

@@ -49,7 +49,7 @@ public class Navigator extends javax.swing.JPanel {
         title.setBackground(new java.awt.Color(38, 37, 34));
         title.setFont(new java.awt.Font("Segoe UI Black", 0, 24)); // NOI18N
         title.setForeground(new java.awt.Color(238, 238, 238));
-        title.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/images/DamaLogo.png"))); // NOI18N
+        title.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/images/selection_icon/DamaLogo.png"))); // NOI18N
         title.setText("DAMA");
         title.setBorder(null);
         title.setBorderPainted(false);
@@ -90,10 +90,15 @@ public class Navigator extends javax.swing.JPanel {
         navigation.setPreferredSize(new java.awt.Dimension(150, 250));
         navigation.setLayout(new java.awt.GridBagLayout());
 
-        playButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/images/playIcon.png"))); // NOI18N
+        playButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/images/selection_icon/playIcon.png"))); // NOI18N
         playButton.setText("Play");
         playButton.setAlignmentY(0.0F);
         playButton.setIconTextGap(14);
+        playButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                playButtonActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -102,7 +107,7 @@ public class Navigator extends javax.swing.JPanel {
         gridBagConstraints.weighty = 1.0;
         navigation.add(playButton, gridBagConstraints);
 
-        learnButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/images/graduationCapIcon.png"))); // NOI18N
+        learnButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/images/selection_icon/graduationCapIcon.png"))); // NOI18N
         learnButton.setText("Learn");
         learnButton.setAlignmentY(0.0F);
         learnButton.setIconTextGap(14);
@@ -119,7 +124,7 @@ public class Navigator extends javax.swing.JPanel {
         gridBagConstraints.weighty = 1.0;
         navigation.add(learnButton, gridBagConstraints);
 
-        aboutButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/images/infoIcon.png"))); // NOI18N
+        aboutButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/images/selection_icon/infoIcon.png"))); // NOI18N
         aboutButton.setText("About");
         aboutButton.setAlignmentY(0.0F);
         aboutButton.setIconTextGap(14);
@@ -131,7 +136,7 @@ public class Navigator extends javax.swing.JPanel {
         gridBagConstraints.weighty = 1.0;
         navigation.add(aboutButton, gridBagConstraints);
 
-        settingsButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/images/settingsIcon.png"))); // NOI18N
+        settingsButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/images/selection_icon/settingsIcon.png"))); // NOI18N
         settingsButton.setText("Settings");
         settingsButton.setAlignmentY(0.0F);
         settingsButton.setIconTextGap(14);
@@ -143,7 +148,7 @@ public class Navigator extends javax.swing.JPanel {
         gridBagConstraints.weighty = 1.0;
         navigation.add(settingsButton, gridBagConstraints);
 
-        profileButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/images/profileIcon.png"))); // NOI18N
+        profileButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/images/selection_icon/profileIcon.png"))); // NOI18N
         profileButton.setText("Profile");
         profileButton.setAlignmentY(0.0F);
         profileButton.setIconTextGap(14);
@@ -155,7 +160,7 @@ public class Navigator extends javax.swing.JPanel {
         gridBagConstraints.weighty = 1.0;
         navigation.add(profileButton, gridBagConstraints);
 
-        quitButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/images/exitIcon.png"))); // NOI18N
+        quitButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/images/selection_icon/exitIcon.png"))); // NOI18N
         quitButton.setText("Quit");
         quitButton.setAlignmentY(0.0F);
         quitButton.setIconTextGap(14);
@@ -208,6 +213,14 @@ public class Navigator extends javax.swing.JPanel {
             System.exit(0);
         }
     }//GEN-LAST:event_quitButtonActionPerformed
+
+    private void playButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playButtonActionPerformed
+        
+        final MainFrame main = (MainFrame) Directory.getParent(Directory.ParentName.MAIN_FRAME);
+        
+        if (main != null)
+            main.setDirectory(Directory.Panel.GAME_PLAY);
+    }//GEN-LAST:event_playButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private component.Button.NavButton aboutButton;

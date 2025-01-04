@@ -43,6 +43,7 @@ public final class BoardPanel extends JPanel {
     
     // Constructor: Define a system of graphical board interface
     BoardPanel(final Table table) {
+        super(new BorderLayout());
         this.table = table;
         this.dragGlassPane = new DragGlassPane(this);
         this.tilesContainer = new JPanel(new GridLayout(8, 8));
@@ -65,7 +66,6 @@ public final class BoardPanel extends JPanel {
     
     // Configuration: Display the BoardPanel GUI design
     private void initComponents() {
-        setLayout(new BorderLayout());
         setBackground(BACKGROUND_COLOR);
         setForeground(Color.WHITE);
         setFocusable(false);
@@ -116,6 +116,15 @@ public final class BoardPanel extends JPanel {
     }
     
     /**
+     * Get the current direction of the board
+     * USED: for the system(TilePanel) only -> same package only
+     * @return Direction
+     */
+    Direction getCurrentDirection() {
+        return this.direction;
+    }
+    
+    /**
      * Get the tiles within the boardPanel according to the point location
      * USED: for the system(TilePanel) only -> same package only
      * @param dropPoint Point
@@ -136,6 +145,18 @@ public final class BoardPanel extends JPanel {
     void setDirection(final Direction direction) {
         this.direction = direction;
         drawBoard(table.getGameBoard());
+    }
+    
+    /**
+     * Disable the board system
+     * USED: for the system(TilePanel) only -> same package only
+     */
+    void disableBoard() {
+        for (final TilePanel tilePanel : direction.traverse(boardTiles).values()) {
+            tilePanel.disableTile();
+        }
+        validate();
+        repaint();
     }
     
     /**
@@ -203,9 +224,15 @@ public final class BoardPanel extends JPanel {
             Map<Position, TilePanel> traverse(final Map<Position, TilePanel> boardTiles) {
                 return boardTiles;
             }
+            
             @Override
             Direction opposite() {
                 return FLIPPED;
+            }
+
+            @Override
+            boolean reversed() {
+                return false;
             }
         },
         FLIPPED {
@@ -219,21 +246,29 @@ public final class BoardPanel extends JPanel {
                 }
                 return reversedMap;
             }
+            
             @Override
             Direction opposite() {
                 return NORMAL;
             }
+
+            @Override
+            boolean reversed() {
+                return true;
+            }
         };
+        
         abstract Map<Position, TilePanel> traverse(final Map<Position, TilePanel> boardTiles);
         abstract Direction opposite();
+        abstract boolean reversed();
     }
     
     // Override setBounds to enforce square size
     @Override
     public void setBounds(int x, int y, int width, int height) {
         int size = Math.min(width, height);
-        int offsetX = (width - size) / 2;
-        int offsetY = (height - size) / 2;
+        int offsetX = x + (width - size) / 2;
+        int offsetY = y + (height - size) / 2;
         super.setBounds(offsetX, offsetY, size, size);
     }
 }

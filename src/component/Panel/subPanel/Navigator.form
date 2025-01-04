@@ -54,7 +54,7 @@
           <Color blue="ee" green="ee" red="ee" type="rgb"/>
         </Property>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/resources/images/DamaLogo.png"/>
+          <Image iconType="3" name="/resources/images/selection_icon/DamaLogo.png"/>
         </Property>
         <Property name="text" type="java.lang.String" value="DAMA"/>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
@@ -159,12 +159,15 @@
             <Component class="component.Button.NavButton" name="playButton">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/resources/images/playIcon.png"/>
+                  <Image iconType="3" name="/resources/images/selection_icon/playIcon.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Play"/>
                 <Property name="alignmentY" type="float" value="0.0"/>
                 <Property name="iconTextGap" type="int" value="14"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="playButtonActionPerformed"/>
+              </Events>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
                   <GridBagConstraints gridX="0" gridY="0" gridWidth="1" gridHeight="1" fill="2" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="10" weightX="1.0" weightY="1.0"/>
@@ -174,7 +177,7 @@
             <Component class="component.Button.NavButton" name="learnButton">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/resources/images/graduationCapIcon.png"/>
+                  <Image iconType="3" name="/resources/images/selection_icon/graduationCapIcon.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Learn"/>
                 <Property name="alignmentY" type="float" value="0.0"/>
@@ -192,7 +195,7 @@
             <Component class="component.Button.NavButton" name="aboutButton">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/resources/images/infoIcon.png"/>
+                  <Image iconType="3" name="/resources/images/selection_icon/infoIcon.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="About"/>
                 <Property name="alignmentY" type="float" value="0.0"/>
@@ -207,7 +210,7 @@
             <Component class="component.Button.NavButton" name="settingsButton">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/resources/images/settingsIcon.png"/>
+                  <Image iconType="3" name="/resources/images/selection_icon/settingsIcon.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Settings"/>
                 <Property name="alignmentY" type="float" value="0.0"/>
@@ -222,7 +225,7 @@
             <Component class="component.Button.NavButton" name="profileButton">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/resources/images/profileIcon.png"/>
+                  <Image iconType="3" name="/resources/images/selection_icon/profileIcon.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Profile"/>
                 <Property name="alignmentY" type="float" value="0.0"/>
@@ -237,7 +240,7 @@
             <Component class="component.Button.NavButton" name="quitButton">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/resources/images/exitIcon.png"/>
+                  <Image iconType="3" name="/resources/images/selection_icon/exitIcon.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Quit"/>
                 <Property name="alignmentY" type="float" value="0.0"/>

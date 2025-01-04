@@ -61,6 +61,14 @@ public abstract class Player {
     }
     
     /**
+     * Check if there is no available pieces
+     * @return Boolean
+     */
+    public boolean isLooser() {
+        return !this.getActivePieces().isEmpty();
+    }
+    
+    /**
      * Get All possible move of the player
      * @return Collection of Move
      */

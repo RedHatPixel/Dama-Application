@@ -2,33 +2,126 @@ package com.dama.gui;
 
 import com.dama.engine.board.Board;
 import com.dama.engine.board.Tile;
+import com.dama.engine.dependencies.Alliance;
 import com.dama.engine.pieces.Piece;
+import com.dama.engine.players.Player;
 
-public final class Table {
-    
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+
+import javax.swing.JPanel;
+
+public final class Table extends JPanel {
+
+    // Static Variables
+    private static final Dimension PREFERRED_SIZE = new Dimension(500, 600);
+    private static final Color BACKGROUND_COLOR = new Color(48, 46, 43);
+
     // Define Variables
     private final BoardPanel boardPanel;
+    private final PlayerPanel bottomPlayerPanel;
+    private final PlayerPanel topPlayerPanel;
+    private boolean reversed;
     private Board gameBoard;
-    
+
     // Players Selection -> Tiles, Piece  -> same package only
     Tile sourceTile;
     Tile destinationTile;
     Piece selectedPiece;
-    
+    Player winner;
+    Status status;
+
     public Table() {
+        super(new GridBagLayout());
         this.gameBoard = Board.createStandardBoard();
         this.boardPanel = new BoardPanel(this);
-        this.boardPanel.drawBoard(gameBoard);
-        this.boardPanel.setDirection(BoardPanel.Direction.NORMAL);
+        this.boardPanel.setDirection(GameInfo.boardDirection);
+        this.reversed = false;
+        
+        if (GameInfo.boardDirection.reversed()) {
+            this.bottomPlayerPanel = new PlayerPanel(this, gameBoard.getBlackPlayer(), GameInfo.BottomPlayerName);
+            this.topPlayerPanel = new PlayerPanel(this, gameBoard.getWhitePlayer(), GameInfo.TopPlayerName);
+        } else {
+            this.bottomPlayerPanel = new PlayerPanel(this, gameBoard.getWhitePlayer(), GameInfo.BottomPlayerName);
+            this.topPlayerPanel = new PlayerPanel(this, gameBoard.getBlackPlayer(), GameInfo.TopPlayerName);
+        }
+        
+        this.bottomPlayerPanel.startTimer(GameInfo.duration);
+        this.topPlayerPanel.startTimer(GameInfo.duration);
+        
+        initComponents();
+    }
+
+    // Configuration: Set the TablePanel GUI Display
+    private void initComponents() {
+        setBackground(BACKGROUND_COLOR);
+        setForeground(Color.WHITE);
+        setOpaque(true);
+        setFocusable(false);
+        setVisible(true);
+        setPreferredSize(PREFERRED_SIZE);
+        setMinimumSize(getPreferredSize());
+        setName("Table");
+        setRequestFocusEnabled(false);
+        addComponents(bottomPlayerPanel, topPlayerPanel);
+    }
+ 
+    private void addComponents(final PlayerPanel bottomPlayer, final PlayerPanel topPlayer) {
+        removeAll();
+                
+        GridBagConstraints gridBagConstraints;
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.weightx = 1;
+        gridBagConstraints.weighty = 0.8;
+        gridBagConstraints.gridwidth = 1;
+        gridBagConstraints.gridheight = 1;
+        gridBagConstraints.fill = GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = GridBagConstraints.CENTER;
+        add(boardPanel, gridBagConstraints);
+
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.weightx = 1;
+        gridBagConstraints.weighty = 0.1;
+        gridBagConstraints.gridwidth = 1;
+        gridBagConstraints.gridheight = 1;
+        gridBagConstraints.fill = GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = GridBagConstraints.PAGE_START;
+        add(topPlayer, gridBagConstraints);
+
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.weightx = 1;
+        gridBagConstraints.weighty = 0.1;
+        gridBagConstraints.gridwidth = 1;
+        gridBagConstraints.gridheight = 1;
+        gridBagConstraints.fill = GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = GridBagConstraints.PAGE_END;
+        add(bottomPlayer, gridBagConstraints);
     }
     
     /**
-     * Get the game engine of the Game
+     * Get the game engine
      * USED: to retrieve this to the control system [BoardPanel]  -> same package only
      * @return Board
      */
     Board getGameBoard() {
         return this.gameBoard;
+    }
+    
+    /**
+     * Get the game GUI
+     * USED: to retrieve this to the control system [BoardPanel]  -> same package only
+     * @return Board
+     */
+    BoardPanel getBoardPanel() {
+        return this.boardPanel;
     }
     
     /**
@@ -41,11 +134,52 @@ public final class Table {
     }
     
     /**
-     * Get the game GUI of the Game
-     * USED: to retrieve this to the GUI system [Frame, Panels, etc...]
-     * @return BoardPanel
+     * Reverse the player display from top to bottom, bottom to top
+     * USED: for the system(TilePanel) only -> same package only
      */
-    public BoardPanel getBoardPanel() {
-        return this.boardPanel;
+    void reversePlayer() {
+        reversed = !reversed;
+        if (reversed)
+            addComponents(this.topPlayerPanel, this.bottomPlayerPanel);
+        else
+            addComponents(this.bottomPlayerPanel, this.topPlayerPanel);
+        revalidate();
+        repaint();
+    }
+    
+    public static enum Status {
+        STALEMATE {
+            @Override
+            PlayerPanel getWinner(final PlayerPanel topPlayerPanel, final PlayerPanel bottomPlayerPanel) {
+                return null;
+            }
+        },
+        BLACK_PLAYER_WIN {
+            @Override
+            PlayerPanel getWinner(final PlayerPanel topPlayerPanel, final PlayerPanel bottomPlayerPanel) {
+                return topPlayerPanel.getPlayer().getAlliance().isBlack() ?
+                        topPlayerPanel : bottomPlayerPanel;
+            }
+        },
+        WHITE_PLAYER_WIN {
+            @Override
+            PlayerPanel getWinner(final PlayerPanel topPlayerPanel, final PlayerPanel bottomPlayerPanel) {
+                return topPlayerPanel.getPlayer().getAlliance().isWhite() ?
+                        topPlayerPanel : bottomPlayerPanel;
+            }
+        };
+        
+        abstract PlayerPanel getWinner(final PlayerPanel topPlayerPanel, final PlayerPanel bottomPlayerPanel);
+    }
+    
+    // Set the Proper Size for the Table Panel
+    @Override
+    public void setBounds(int x, int y, int width, int height) {
+        int size = Math.min(width, height);
+        int totalWidth = (int) (size * 0.8);
+        int offSetX = x + ((width + ((int) (size * 0.2))) - size) / 2;
+        int offSetY = y + (height - size) / 2;
+        
+        super.setBounds(offSetX, offSetY, totalWidth, size);
     }
 }

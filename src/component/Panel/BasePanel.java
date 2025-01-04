@@ -1,7 +1,6 @@
 package component.Panel;
 
 import utilities.CommonConstants;
-import utilities.Direction;
 import utilities.Directory;
 
 public abstract class BasePanel extends javax.swing.JPanel implements Direction {

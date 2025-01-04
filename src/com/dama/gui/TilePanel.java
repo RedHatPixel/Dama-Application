@@ -14,6 +14,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -94,7 +95,6 @@ final class TilePanel extends JPanel {
                             TilePanel.this, e.getPoint(), boardPanel.getDragGlassPane()));
                 }
             });
-            
         }
            
         content.setHorizontalAlignment(JLabel.CENTER);
@@ -132,6 +132,13 @@ final class TilePanel extends JPanel {
         assignTileSelectionIcon(piece, board);
         setBackgroundRespectiveColor();
         initializeAndResizeTileIcon();
+    }
+    
+    void disableTile() {
+        removeMouseListener(tilePanelSystem);
+        for (final MouseMotionListener comp : this.getMouseMotionListeners()) {
+            removeMouseMotionListener(comp);
+        }
     }
     
     /**
@@ -202,6 +209,7 @@ final class TilePanel extends JPanel {
     
     // Configuration: Highlight the tiles background if the piece in it can be capture
     private void highlightTileBackgroundCaptures(final Board board) {
+        if (!GameInfo.showCapturable) return;
         for (final Move move : board.getCurrentPlayer().getLegalMoves()) {
             if (move.getType().canAttack()) {
                 if (board.getLatestMove().getType().canAttackAgain() &&
@@ -230,7 +238,7 @@ final class TilePanel extends JPanel {
     
     // Configuration: Highlight the tiles if it can be move
     private void assignTileSelectionIcon(final Piece piece, final Board board) {
-        if (piece == null) return;
+        if (piece == null || !GameInfo.showValidMoves) return;
         else if (board.getTile(coordinate).isOccupied()) return;
         else if (piece.getAlliance() != board.getCurrentPlayer().getAlliance()) return;
         image = "";

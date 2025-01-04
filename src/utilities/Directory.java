@@ -95,7 +95,8 @@ public final class Directory {
     
     public enum Panel {
         MAIN_MENU("MainMenu"),
-        TUTORIAL("Tutorial");
+        TUTORIAL("Tutorial"),
+        GAME_PLAY("Game Play");
         
         private String name;
         

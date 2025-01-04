@@ -4,7 +4,6 @@ import utilities.CommonConstants;
 import utilities.Directory;
 import utilities.FontManager;
 import utilities.FontManager.*;
-import utilities.Direction;
 import java.awt.Dimension;
 
 public class MainMenu extends javax.swing.JPanel implements Direction {
