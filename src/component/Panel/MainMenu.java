@@ -142,6 +142,11 @@ public class MainMenu extends javax.swing.JPanel implements Direction {
         startButton.setMaximumSize(new java.awt.Dimension(150, 50));
         startButton.setMinimumSize(new java.awt.Dimension(150, 50));
         startButton.setPreferredSize(new java.awt.Dimension(170, 50));
+        startButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                startButtonActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -211,6 +216,10 @@ public class MainMenu extends javax.swing.JPanel implements Direction {
 
         getAccessibleContext().setAccessibleName("MainMenu");
     }// </editor-fold>//GEN-END:initComponents
+
+    private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed
+        
+    }//GEN-LAST:event_startButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel body;

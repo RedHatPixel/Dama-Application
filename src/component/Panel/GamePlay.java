@@ -28,6 +28,9 @@ public abstract class GamePlay extends javax.swing.JPanel implements Direction {
     private void initComponents() {
 
         navigator = new component.Panel.subPanel.Navigator();
+        javax.swing.JPanel mainBody = new javax.swing.JPanel();
+        game = new javax.swing.JPanel();
+        setting = new javax.swing.JPanel();
 
         setBackground(new java.awt.Color(48, 46, 43));
         setForeground(new java.awt.Color(255, 255, 255));
@@ -39,10 +42,36 @@ public abstract class GamePlay extends javax.swing.JPanel implements Direction {
         setLayout(new java.awt.BorderLayout());
         add(navigator, java.awt.BorderLayout.WEST);
 
+        mainBody.setDoubleBuffered(false);
+        mainBody.setEnabled(false);
+        mainBody.setFocusable(false);
+        mainBody.setName("mainBody"); // NOI18N
+        mainBody.setOpaque(false);
+        mainBody.setLayout(new javax.swing.BoxLayout(mainBody, javax.swing.BoxLayout.LINE_AXIS));
+
+        game.setDoubleBuffered(false);
+        game.setEnabled(false);
+        game.setFocusable(false);
+        game.setMinimumSize(new java.awt.Dimension(270, 10));
+        game.setOpaque(false);
+        game.setPreferredSize(new java.awt.Dimension(270, 10));
+        mainBody.add(game);
+
+        setting.setDoubleBuffered(false);
+        setting.setEnabled(false);
+        setting.setFocusable(false);
+        setting.setPreferredSize(new java.awt.Dimension(1, 10));
+        mainBody.add(setting);
+
+        add(mainBody, java.awt.BorderLayout.CENTER);
+        mainBody.getAccessibleContext().setAccessibleName("");
+
         getAccessibleContext().setAccessibleName("BasePanel");
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel game;
     private component.Panel.subPanel.Navigator navigator;
+    private javax.swing.JPanel setting;
     // End of variables declaration//GEN-END:variables
 }
