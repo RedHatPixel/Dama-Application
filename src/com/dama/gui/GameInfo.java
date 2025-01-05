@@ -1,13 +1,21 @@
 package com.dama.gui;
+
 import com.dama.gui.BoardPanel.Direction;
 
 public final class GameInfo {
     
+    // Constructor: Prevent Instantiation
+    private GameInfo() {
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated.");
+    }
+    
+    // Static Variables: Game Data
     public static String TopPlayerName = "Opponent";
     public static String BottomPlayerName = "Player";
     public static GameDuration duration = GameDuration.FIVE_MINUTES;
     public static Direction boardDirection = Direction.NORMAL;
     
+    // Static Variables Game Setting
     public static boolean isChangingTurn = false;
     public static boolean showValidMoves = true;
     public static boolean showCapturable = true;
@@ -17,7 +25,7 @@ public final class GameInfo {
         FIVE_MINUTES {
             @Override
             int getTime() {
-                return 5 * 60 * 1000;
+                return 1 * 60 * 1000;
             }
         },
         TEN_MINUTES {

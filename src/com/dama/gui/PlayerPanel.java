@@ -100,14 +100,17 @@ public final class PlayerPanel extends JPanel {
     }
 
     private String getTimerToString() {
-        long minutes = (remainingTime / 1000) / 60;
-        long seconds = (remainingTime / 1000) % 60;
+        final long minutes = (remainingTime / 1000) / 60;
+        final long seconds = (remainingTime / 1000) % 60;
         return String.format("%02d:%02d", minutes, seconds);
     }
     
     void startTimer(GameDuration gameDuration) {
         this.remainingTime = gameDuration.getTime();
         timerLabel.setText(getTimerToString());
+        
+        if (gameDuration == GameDuration.NULL) return;
+
         this.timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
@@ -120,22 +123,23 @@ public final class PlayerPanel extends JPanel {
                     timerLabel.setText(getTimerToString());
                 }
                 else if (remainingTime <= 0) {
-                    timer.cancel();
                     timerLabel.setText(getTimerToString());
-                    
-                    // Check for winner
-                    if (table.getGameBoard().getCurrentPlayer().getOpponent().getAlliance().isWhite()) {
-                        table.status = Table.Status.WHITE_PLAYER_WIN;
-                    }
-                    else {
-                        table.status = Table.Status.BLACK_PLAYER_WIN;
-                    }
-                    
-                    table.getBoardPanel().disableBoard();
+                    stopGameAndLose();
+                    timer.cancel();
                 }
             }
         }, 0, 1000);
         pauseTimer();
+    }
+    
+    void stopGameAndLose() {
+        if (table.getGameBoard().getCurrentPlayer().getOpponent().getAlliance().isWhite())
+            table.status = Table.Status.WHITE_PLAYER_WIN;
+        else
+            table.status = Table.Status.BLACK_PLAYER_WIN;
+        table.getBoardPanel().disableBoard();
+        table.getBoardPanel().drawBoard(table.getGameBoard());
+        table.getBoardPanel().getDragGlassPane().showGameEnd(table.status, table);
     }
     
     void stopTimer() {

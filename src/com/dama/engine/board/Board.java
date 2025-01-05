@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Board {
@@ -127,6 +128,28 @@ public class Board {
      */
     public boolean calculateSameMovedPiece(final Move currentMove) {
         return currentMove.getMovedPiece().equals(this.latestMovedPiece);
+    }
+    
+    /**
+     * Check if there is a capture move within 50 moves
+     * @param gamePlay List of Board
+     * @return List of Board
+     */
+    public List<Board> calculate50LatestMove(final List<Board> gamePlay) {
+        final List<Board> boards = new ArrayList<>();
+        
+        if (gamePlay.size() >= 50) {
+            final int startAt = gamePlay.size() - 1;
+            final int endsAt = gamePlay.size() - 50;
+            for (int i = startAt; i <= endsAt; i--) {
+                if (gamePlay.get(i).getLatestMove().getType().isNaN())
+                    continue;
+                if (gamePlay.get(i).getLatestMove().getType().canAttack())
+                    boards.add(gamePlay.get(i));
+            }
+        }
+        else boards.addAll(gamePlay);
+        return Collections.unmodifiableList(boards);
     }
     
     /**

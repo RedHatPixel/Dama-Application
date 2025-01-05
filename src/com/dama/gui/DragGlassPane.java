@@ -14,11 +14,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-
-
 // Inner Class: DragGlassPane for overlaying dragged icons
 final class DragGlassPane extends JPanel {
     
+    // Define Variables
     private final BoardPanel boardPanel;
     private Point mouseLocation;
     private ImageIcon draggedIcon;
@@ -67,7 +66,6 @@ final class DragGlassPane extends JPanel {
         repaint();
     }
     
-    
     /**
      * Set the new location of the dragged icon
      * USED: for the system(TilePanel) only -> same package only
@@ -107,7 +105,7 @@ final class DragGlassPane extends JPanel {
     }
     
     @Override
-    public void paintComponent(Graphics g) {
+    public void paintComponent(final Graphics g) {
         super.paintComponent(g);
         if (isDragging && draggedIcon != null && mouseLocation != null) {
             int x = mouseLocation.x - (draggedIcon.getIconWidth() / 2);

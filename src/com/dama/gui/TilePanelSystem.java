@@ -148,16 +148,26 @@ final class TilePanelSystem implements MouseListener {
             
             getTable().stopPlayerTimer();
             getBoardPanel().disableBoard();
-            
             getDragGlassPane().showGameEnd(getTable().status, getTable());
         }
         // Check if current player has no moves
         else if (getGameBoard().getCurrentPlayer().isStalemate()) {
+            if (getTable().getGameBoard().getCurrentPlayer().getOpponent().getAlliance().isWhite()) {
+                getTable().status = Table.Status.WHITE_PLAYER_WIN;
+            }
+            else {
+                getTable().status = Table.Status.BLACK_PLAYER_WIN;
+            }
+            
+            getTable().stopPlayerTimer();
+            getBoardPanel().disableBoard();
+            getDragGlassPane().showGameEnd(getTable().status, getTable());
+        }
+        else if (getGameBoard().calculate50LatestMove(getTable().getGamePlay()).isEmpty()) {
             getTable().status = Table.Status.STALEMATE;
             
             getTable().stopPlayerTimer();
             getBoardPanel().disableBoard();
-            
             getDragGlassPane().showGameEnd(getTable().status, getTable());
         }
         // Flip board game play
@@ -178,7 +188,7 @@ final class TilePanelSystem implements MouseListener {
     }
     
     @Override
-    public void mouseClicked(MouseEvent e) {
+    public void mouseClicked(final MouseEvent e) {
         // User right click a MouseButton
         if (isRightMouseButton(e)) {
             resetSelections();
@@ -186,7 +196,7 @@ final class TilePanelSystem implements MouseListener {
     }
 
     @Override
-    public void mousePressed(MouseEvent e) {
+    public void mousePressed(final MouseEvent e) {
         if (isLeftMouseButton(e)) {
             pressed = true;
             tilePanel.setBackgroundRespectiveColor();
@@ -218,7 +228,7 @@ final class TilePanelSystem implements MouseListener {
     }
 
     @Override
-    public void mouseReleased(MouseEvent e) {
+    public void mouseReleased(final MouseEvent e) {
         if (isLeftMouseButton(e)) {
             pressed = false;
             tilePanel.setBackgroundRespectiveColor();
@@ -231,8 +241,8 @@ final class TilePanelSystem implements MouseListener {
             if (getTable().sourceTile != null && getTable().destinationTile != null) {
                 
                 // Get the mouse target
-                Point point = SwingUtilities.convertPoint(tilePanel, e.getPoint(), getBoardPanel());
-                TilePanel targetTile = getBoardPanel().getTilePanelAt(point);
+                final Point point = SwingUtilities.convertPoint(tilePanel, e.getPoint(), getBoardPanel());
+                final TilePanel targetTile = getBoardPanel().getTilePanelAt(point);
                 
                 if (targetTile == null || !targetTile.getCoordinate().equals(getTable().destinationTile.getCoordinate())) {
                     resetSelections();
@@ -248,8 +258,8 @@ final class TilePanelSystem implements MouseListener {
                 getDragGlassPane().repaint();
                 
                 // Get the mouse target
-                Point point = SwingUtilities.convertPoint(tilePanel, e.getPoint(), getBoardPanel());
-                TilePanel targetTile = getBoardPanel().getTilePanelAt(point);
+                final Point point = SwingUtilities.convertPoint(tilePanel, e.getPoint(), getBoardPanel());
+                final TilePanel targetTile = getBoardPanel().getTilePanelAt(point);
 
                 // Determine the dropping tile coordinate
                 if (targetTile != null && getTable().sourceTile != null) {
@@ -278,13 +288,13 @@ final class TilePanelSystem implements MouseListener {
     }
 
     @Override
-    public void mouseEntered(MouseEvent e) {
+    public void mouseEntered(final MouseEvent e) {
         hover = true;
         tilePanel.setBackgroundRespectiveColor();
     }
 
     @Override
-    public void mouseExited(MouseEvent e) {
+    public void mouseExited(final MouseEvent e) {
         hover = false;
         tilePanel.setBackgroundRespectiveColor();
     }

@@ -152,7 +152,7 @@ public final class BoardPanel extends JPanel {
      * USED: for the system(TilePanel) only -> same package only
      */
     void disableBoard() {
-        for (final TilePanel tilePanel : direction.traverse(boardTiles).values()) {
+        for (final TilePanel tilePanel : boardTiles.values()) {
             tilePanel.disableTile();
         }
         validate();
@@ -218,7 +218,7 @@ public final class BoardPanel extends JPanel {
     }
     
     // Enum State: The Direction of the board
-    public static enum Direction {
+    static enum Direction {
         NORMAL {
             @Override
             Map<Position, TilePanel> traverse(final Map<Position, TilePanel> boardTiles) {

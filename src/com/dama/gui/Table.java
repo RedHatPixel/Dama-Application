@@ -8,6 +8,9 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import javax.swing.JPanel;
 
@@ -18,6 +21,7 @@ public final class Table extends JPanel {
     private static final Color BACKGROUND_COLOR = new Color(48, 46, 43);
 
     // Define Variables
+    private final List<Board> gamePlay;
     private final BoardPanel boardPanel;
     private final PlayerPanel bottomPlayerPanel;
     private final PlayerPanel topPlayerPanel;
@@ -30,10 +34,13 @@ public final class Table extends JPanel {
     Piece selectedPiece;
     Status status;
 
+    // Constructor: Define a system of graphical game interface
     public Table() {
         super(new GridBagLayout());
+        this.gamePlay = new ArrayList<>();
         this.gameBoard = Board.createStandardBoard();
         this.boardPanel = new BoardPanel(this);
+        this.gamePlay.add(gameBoard);
         this.boardPanel.setDirection(GameInfo.boardDirection);
         this.reversed = false;
         
@@ -64,10 +71,10 @@ public final class Table extends JPanel {
         setRequestFocusEnabled(false);
         addComponents(bottomPlayerPanel, topPlayerPanel);
     }
- 
+    
+    // Configuration: Display the components of the Table
     private void addComponents(final PlayerPanel bottomPlayer, final PlayerPanel topPlayer) {
         removeAll();
-                
         GridBagConstraints gridBagConstraints;
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -113,6 +120,15 @@ public final class Table extends JPanel {
     }
     
     /**
+     * Get the game history
+     * USED: to retrieve this to the control system [BoardPanel]  -> same package only
+     * @return List of Board
+     */
+    List<Board> getGamePlay() {
+        return Collections.unmodifiableList(this.gamePlay);
+    }
+    
+    /**
      * Get the game GUI
      * USED: to retrieve this to the control system [BoardPanel]  -> same package only
      * @return Board
@@ -121,19 +137,31 @@ public final class Table extends JPanel {
         return this.boardPanel;
     }
     
+    /**
+     * Get the game GUI top player
+     * USED: for the system(TilePanel) only -> same package only
+     * @return PlayerPanel
+     */
     PlayerPanel getTopPlayerPanel() {
         return this.topPlayerPanel;
     }
     
+    /**
+     * Get the game GUI bottom player
+     * USED: for the system(TilePanel) only -> same package only
+     * @return PlayerPanel
+     */
     PlayerPanel getBottomPlayerPanel() {
         return this.bottomPlayerPanel;
     }
+    
     /**
      * Set the game engine of the Game
      * USED: to set a new line of boards by Board.builder()  -> same package only
      * @param board Board
      */
     void setGameBoard(final Board board) {
+        this.gamePlay.add(board);
         this.gameBoard = board;
     }
     
@@ -160,6 +188,7 @@ public final class Table extends JPanel {
         this.bottomPlayerPanel.stopTimer();
     }
     
+    // Enum State: The Status of the game
     public static enum Status {
         STALEMATE {
             @Override

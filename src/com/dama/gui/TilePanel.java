@@ -1,8 +1,9 @@
-package com.dama.gui;
+ package com.dama.gui;
 
 import com.dama.engine.dependencies.Position;
 import com.dama.engine.dependencies.Move;
 import com.dama.engine.board.Board;
+import com.dama.engine.board.BoardUtils;
 import com.dama.engine.dependencies.Move.AttackMove;
 import com.dama.engine.dependencies.Move.MultipleAttackMove;
 import com.dama.engine.pieces.Piece;
@@ -96,7 +97,6 @@ final class TilePanel extends JPanel {
                 }
             });
         }
-           
         content.setHorizontalAlignment(JLabel.CENTER);
         content.setVerticalAlignment(JLabel.CENTER);
         add(content, BorderLayout.CENTER);
@@ -110,8 +110,8 @@ final class TilePanel extends JPanel {
      * @param board Board
      */
     void drawTile(final Board board) {
-        assigned = false;
         selected = false;
+        assigned = false;
         threaten = false;
         highlightTileFinalMove(board);
         highlightTileBackgroundCaptures(board);
@@ -146,7 +146,8 @@ final class TilePanel extends JPanel {
      * USED: for the TilePanelSystem only -> same package only
      */
     void setBackgroundRespectiveColor() {
-        final Color background = (this.coordinate.x() + this.coordinate.y()) % 2 != 0 ? TILE_BLACK : TILE_WHITE;
+        final Color background = 
+                BoardUtils.TILES_PATTERN[this.coordinate.x()][this.coordinate.y()] ? TILE_BLACK : TILE_WHITE;
         setBackground(
                 threaten ? TILE_THREATEN :
                 assigned ? TILE_MOVED :
