@@ -1,10 +1,6 @@
 package main;
 
-import com.dama.gui.Table;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridBagLayout;
-import javax.swing.JFrame;
+import utilities.Directory;
 
 public class AppLauncher {
 
@@ -24,17 +20,9 @@ public class AppLauncher {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
-//            MainFrame main = new MainFrame();
-//            main.setVisible(true);
-//            Directory.insertParent(main);
-
-            JFrame frame = new JFrame();
-            frame.setVisible(true);
-            frame.setSize(new Dimension(700, 700));
-            frame.setLocationRelativeTo(null);
-            frame.setLayout(new BorderLayout());
-            frame.getContentPane().add(new Table());
-            
+            MainFrame main = new MainFrame();
+            main.setVisible(true);
+            Directory.insertParent(main);
         });
     }
     

@@ -89,7 +89,7 @@ public class HistoryData extends javax.swing.JPanel {
 
         logo.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         logo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        logo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/images/stopwatch.png"))); // NOI18N
+        logo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/images/game_icon/stopwatch.png"))); // NOI18N
         logo.setToolTipText(null);
         logo.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         logo.setMaximumSize(new java.awt.Dimension(40, 45));
@@ -178,7 +178,6 @@ public class HistoryData extends javax.swing.JPanel {
         result.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         result.setForeground(new java.awt.Color(255, 255, 255));
         result.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        result.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/images/winIcon.png"))); // NOI18N
         result.setToolTipText(null);
         result.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         result.setMaximumSize(new java.awt.Dimension(40, 45));

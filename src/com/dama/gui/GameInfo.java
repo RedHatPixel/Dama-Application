@@ -1,7 +1,5 @@
 package com.dama.gui;
 
-import com.dama.gui.BoardPanel.Direction;
-
 public final class GameInfo {
     
     // Constructor: Prevent Instantiation
@@ -12,13 +10,19 @@ public final class GameInfo {
     // Static Variables: Game Data
     public static String TopPlayerName = "Opponent";
     public static String BottomPlayerName = "Player";
-    public static GameDuration duration = GameDuration.FIVE_MINUTES;
-    public static Direction boardDirection = Direction.NORMAL;
+    public static GameDuration duration = GameDuration.NULL;
+    public static GameSwitch BOARD_DIRECTION = GameSwitch.NORMAL;
     
     // Static Variables Game Setting
     public static boolean isChangingTurn = false;
     public static boolean showValidMoves = true;
     public static boolean showCapturable = true;
+    
+    // Enum for reverse player allaince board
+    public static enum GameSwitch {
+        FLIPPED,
+        NORMAL;
+    }
 
     // Enum for predefined game durations
     public static enum GameDuration {
@@ -40,10 +44,16 @@ public final class GameInfo {
                 return 15 * 60 * 1000;
             }
         },
-        NULL {
+        NO_TIMER {
             @Override
             int getTime() {
                 return 0;
+            }
+        },
+        NULL {
+            @Override
+            int getTime() {
+                return -1;
             }
         };
 

@@ -114,9 +114,14 @@ public final class PlayerPanel extends JPanel {
         this.timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                if (table.getGameBoard().getCurrentPlayer().getAlliance().equals(player.getAlliance())) 
+                if (table.getGameBoard().getCurrentPlayer().getAlliance().equals(player.getAlliance())) {
                     resumeTimer();
-                else   pauseTimer();
+                    timerLabel.setBackground(new Color(182, 181, 169));
+                }
+                else  {
+                    timerLabel.setBackground(new Color(152, 151, 149));
+                    pauseTimer();
+                } 
                 
                 if (!isPaused && remainingTime > 0) {
                     remainingTime -= 1000;

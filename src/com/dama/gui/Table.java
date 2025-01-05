@@ -41,13 +41,14 @@ public final class Table extends JPanel {
         this.gameBoard = Board.createStandardBoard();
         this.boardPanel = new BoardPanel(this);
         this.gamePlay.add(gameBoard);
-        this.boardPanel.setDirection(GameInfo.boardDirection);
         this.reversed = false;
         
-        if (GameInfo.boardDirection.reversed()) {
+        if (GameInfo.BOARD_DIRECTION == GameInfo.GameSwitch.NORMAL) {
+            this.boardPanel.setDirection(BoardPanel.Direction.NORMAL);
             this.bottomPlayerPanel = new PlayerPanel(this, gameBoard.getBlackPlayer(), GameInfo.BottomPlayerName);
             this.topPlayerPanel = new PlayerPanel(this, gameBoard.getWhitePlayer(), GameInfo.TopPlayerName);
         } else {
+            this.boardPanel.setDirection(BoardPanel.Direction.FLIPPED);
             this.bottomPlayerPanel = new PlayerPanel(this, gameBoard.getWhitePlayer(), GameInfo.BottomPlayerName);
             this.topPlayerPanel = new PlayerPanel(this, gameBoard.getBlackPlayer(), GameInfo.TopPlayerName);
         }

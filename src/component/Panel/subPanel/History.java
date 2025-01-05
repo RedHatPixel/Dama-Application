@@ -9,7 +9,7 @@ import java.util.List;
 
 public class History extends javax.swing.JPanel {
 
-    private static GameHistoryManager gameHistoryManager;
+    private static GameHistoryManager gameHistoryManager = new GameHistoryManager();
 
     public History() {
         initComponents();
@@ -19,8 +19,6 @@ public class History extends javax.swing.JPanel {
         PlayerColumn.setFont(FontManager.getFont(FontName.POPPINS_MEDIUM, FontType.POPPINS, PlayerColumn.getFont().getSize()));
         resultColumn.setFont(FontManager.getFont(FontName.POPPINS_MEDIUM, FontType.POPPINS, resultColumn.getFont().getSize()));
         dateColumn.setFont(FontManager.getFont(FontName.POPPINS_MEDIUM, FontType.POPPINS, dateColumn.getFont().getSize()));
-
-        gameHistoryManager = new GameHistoryManager();
 
         GameHistoryData gameData = new GameHistoryData(
                 "Blitz",

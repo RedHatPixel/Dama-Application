@@ -92,7 +92,7 @@ public class MainMenu extends javax.swing.JPanel implements Direction {
         PlayerProfile.setRequestFocusEnabled(false);
         PlayerProfile.setLayout(new java.awt.GridBagLayout());
 
-        userIcon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/images/userIcon.png"))); // NOI18N
+        userIcon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/images/selection_icon/userIcon.png"))); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -105,7 +105,7 @@ public class MainMenu extends javax.swing.JPanel implements Direction {
         userName.setText("guest");
         PlayerProfile.add(userName, new java.awt.GridBagConstraints());
 
-        userFlag.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/flags/philippines.png"))); // NOI18N
+        userFlag.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/images/flags/philippines.png"))); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
@@ -134,7 +134,7 @@ public class MainMenu extends javax.swing.JPanel implements Direction {
         leftPart.setPreferredSize(new java.awt.Dimension(220, 250));
         leftPart.setLayout(new java.awt.GridBagLayout());
 
-        startButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/images/bolt.png"))); // NOI18N
+        startButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/images/game_icon/bolt.png"))); // NOI18N
         startButton.setText("Play");
         startButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         startButton.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
@@ -149,7 +149,7 @@ public class MainMenu extends javax.swing.JPanel implements Direction {
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 23, 0);
         leftPart.add(startButton, gridBagConstraints);
 
-        multiplayerButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/images/handshake.png"))); // NOI18N
+        multiplayerButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/images/game_icon/handshake.png"))); // NOI18N
         multiplayerButton.setText("Multiplayer");
         multiplayerButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         multiplayerButton.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
@@ -164,7 +164,7 @@ public class MainMenu extends javax.swing.JPanel implements Direction {
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 23, 0);
         leftPart.add(multiplayerButton, gridBagConstraints);
 
-        botButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/images/user-robot.png"))); // NOI18N
+        botButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/images/game_icon/user-robot.png"))); // NOI18N
         botButton.setText("Play Bots");
         botButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         botButton.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);

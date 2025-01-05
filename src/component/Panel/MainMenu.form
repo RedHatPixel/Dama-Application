@@ -147,7 +147,7 @@
                     <Component class="javax.swing.JLabel" name="userIcon">
                       <Properties>
                         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                          <Image iconType="3" name="/resources/images/userIcon.png"/>
+                          <Image iconType="3" name="/resources/images/selection_icon/userIcon.png"/>
                         </Property>
                       </Properties>
                       <Constraints>
@@ -178,7 +178,7 @@
                     <Component class="javax.swing.JLabel" name="userFlag">
                       <Properties>
                         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                          <Image iconType="3" name="/resources/flags/philippines.png"/>
+                          <Image iconType="3" name="/resources/images/flags/philippines.png"/>
                         </Property>
                       </Properties>
                       <Constraints>
@@ -249,7 +249,7 @@
                     <Component class="component.Button.MainButton" name="startButton">
                       <Properties>
                         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                          <Image iconType="3" name="/resources/images/bolt.png"/>
+                          <Image iconType="3" name="/resources/images/game_icon/bolt.png"/>
                         </Property>
                         <Property name="text" type="java.lang.String" value="Play"/>
                         <Property name="horizontalAlignment" type="int" value="2"/>
@@ -274,7 +274,7 @@
                     <Component class="component.Button.MainButton" name="multiplayerButton">
                       <Properties>
                         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                          <Image iconType="3" name="/resources/images/handshake.png"/>
+                          <Image iconType="3" name="/resources/images/game_icon/handshake.png"/>
                         </Property>
                         <Property name="text" type="java.lang.String" value="Multiplayer"/>
                         <Property name="horizontalAlignment" type="int" value="2"/>
@@ -299,7 +299,7 @@
                     <Component class="component.Button.MainButton" name="botButton">
                       <Properties>
                         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                          <Image iconType="3" name="/resources/images/user-robot.png"/>
+                          <Image iconType="3" name="/resources/images/game_icon/user-robot.png"/>
                         </Property>
                         <Property name="text" type="java.lang.String" value="Play Bots"/>
                         <Property name="horizontalAlignment" type="int" value="2"/>
