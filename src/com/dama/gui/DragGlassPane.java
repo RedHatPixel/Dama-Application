@@ -1,13 +1,21 @@
 package com.dama.gui;
 
 import com.dama.gui.Table.Status;
+import java.awt.AlphaComposite;
 import utilities.FontManager;
+import java.util.Timer;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.util.TimerTask;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -43,6 +51,64 @@ final class DragGlassPane extends JPanel {
     }
     
     /**
+     * Show the start message of the game
+     * USED: for the system(TilePanel) only -> same package only
+     */
+    void showGameStart(final Table table) {
+        final String playerOneName = table.getTopPlayerPanel().getPlayerName();
+        final String playerTwoName = table.getBottomPlayerPanel().getPlayerName();
+        
+        final String message = "<html><div style='text-align: center;'>" +
+                           playerOneName + "<br>vs<br>" + playerTwoName + 
+                           "</div></html>";
+        
+        removeAll();
+        final FadeLabel title = new FadeLabel(message);
+        title.setHorizontalAlignment(JLabel.CENTER);
+        title.setVerticalAlignment(JLabel.CENTER);
+        title.setOpaque(false);
+        title.setForeground(Color.WHITE);
+        title.setFont(FontManager.getFont(
+                FontManager.FontName.POPPINS_BLACK, FontManager.FontType.POPPINS, 32));
+        add(title);
+        
+        // Create a timer to show the message after a delay
+        new Timer().schedule(new TimerTask() {
+            private float alpha = 0f;
+            @Override
+            public void run() {
+                SwingUtilities.invokeLater(() -> {
+                    alpha += 0.05f;
+                    title.setAlpha(alpha);
+                    if (alpha >= 1f) {
+                        this.cancel();
+                    }
+                });
+            }
+        }, 0, 30);
+        
+        // Create a timer to show the message after a delay
+        new Timer().schedule(new TimerTask() {
+            private float alpha = 1f;
+            @Override
+            public void run() {
+                SwingUtilities.invokeLater(() -> {
+                    alpha -= 0.05f;
+                    title.setAlpha(alpha);
+                    if (alpha <= 0f) {
+                        this.cancel();
+                        removeAll();
+                        revalidate();
+                        repaint();
+                    }
+                });
+            }
+        }, 2000, 30);
+        
+        
+    }
+    
+    /**
      * Show the ending message of the game
      * USED: for the system(TilePanel) only -> same package only
      */
@@ -53,15 +119,30 @@ final class DragGlassPane extends JPanel {
         final String message = winner != null ? winner.getPlayerName() + " wins" : "Game Draw";
         
         removeAll();
-        final JLabel title = new JLabel(message);
+        final FadeLabel title = new FadeLabel(message);
         title.setHorizontalAlignment(JLabel.CENTER);
         title.setVerticalAlignment(JLabel.CENTER);
         title.setOpaque(false);
         title.setForeground(Color.WHITE);
         title.setFont(FontManager.getFont(
                 FontManager.FontName.POPPINS_BLACK, FontManager.FontType.POPPINS, 32));
-        
         add(title, BorderLayout.CENTER);
+        
+        // Create a timer to show the message after a delay
+        new Timer().schedule(new TimerTask() {
+            private float alpha = 0f;
+            @Override
+            public void run() {
+                SwingUtilities.invokeLater(() -> {
+                    alpha += 0.05f;
+                    title.setAlpha(alpha);
+                    if (alpha >= 1f) {
+                        this.cancel();
+                    }
+                });
+            }
+        }, 0, 30);
+        
         revalidate();
         repaint();
     }
@@ -102,6 +183,24 @@ final class DragGlassPane extends JPanel {
      */
     boolean isDragging() {
         return isDragging;
+    }
+    
+    class FadeLabel extends JLabel {
+        private float alpha = 0f; // Default to fully transparent
+
+        private FadeLabel(String text) {
+            super(text);
+        }
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2d = (Graphics2D) g;
+            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
+            super.paintComponent(g);
+        }
+        public void setAlpha(float alpha) {
+            this.alpha = Math.max(0f, Math.min(alpha, 1f));
+            repaint();
+        }
     }
     
     @Override

@@ -141,7 +141,7 @@ public class Board {
         if (gamePlay.size() >= 50) {
             final int startAt = gamePlay.size() - 1;
             final int endsAt = gamePlay.size() - 50;
-            for (int i = startAt; i <= endsAt; i--) {
+            for (int i = startAt; i >= endsAt; i--) {
                 if (gamePlay.get(i).getLatestMove().getType().isNaN())
                     continue;
                 if (gamePlay.get(i).getLatestMove().getType().canAttack())

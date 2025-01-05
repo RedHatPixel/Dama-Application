@@ -98,7 +98,6 @@ final class TilePanelSystem implements MouseListener {
                 getBoardPanel().highlightMoves(getTable().selectedPiece, getGameBoard());
             });
         }
-
     }
     
     // Configurations: Create the move of the selected tiles
@@ -112,7 +111,6 @@ final class TilePanelSystem implements MouseListener {
         // Check if the move was valid
         if (transition.getMoveStatus().isDone()) {
             getTable().setGameBoard(transition.getTransitionBoard());
-
             validateMove();
             
             // Re-select the new possible moves
@@ -120,12 +118,10 @@ final class TilePanelSystem implements MouseListener {
                 getTable().sourceTile = getGameBoard().getTile(getCoordinate());
                 getTable().selectedPiece = getTable().sourceTile.getPiece();
                 getTable().destinationTile = null;
-
                 SwingUtilities.invokeLater(() -> {
                     getBoardPanel().drawBoard(getGameBoard());
                     getBoardPanel().highlightMoves(getTable().selectedPiece, getGameBoard());
                 });
-                
                 return;
             }
         }

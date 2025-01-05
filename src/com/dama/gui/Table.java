@@ -67,6 +67,7 @@ public final class Table extends JPanel {
         setVisible(true);
         setPreferredSize(PREFERRED_SIZE);
         setMinimumSize(getPreferredSize());
+        setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
         setName("Table");
         setRequestFocusEnabled(false);
         addComponents(bottomPlayerPanel, topPlayerPanel);

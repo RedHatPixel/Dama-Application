@@ -82,6 +82,7 @@ public final class BoardPanel extends JPanel {
             if (rootPane != null) {
                 rootPane.setGlassPane(dragGlassPane);
                 dragGlassPane.setVisible(true);
+                dragGlassPane.showGameStart(table);
             }
         });
         addComponentListener(new ComponentAdapter() {

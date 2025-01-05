@@ -25,7 +25,7 @@ public final class GameInfo {
         FIVE_MINUTES {
             @Override
             int getTime() {
-                return 1 * 60 * 1000;
+                return 5 * 60 * 1000;
             }
         },
         TEN_MINUTES {

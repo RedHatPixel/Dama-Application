@@ -128,7 +128,7 @@ public final class PlayerPanel extends JPanel {
                     timer.cancel();
                 }
             }
-        }, 0, 1000);
+        }, 3000, 1000);
         pauseTimer();
     }
     
