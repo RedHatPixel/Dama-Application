@@ -7,7 +7,7 @@ import java.awt.CardLayout;
 
 public class MainFrame extends javax.swing.JFrame {
 
-    private String ImageDirectory = "src/resources/images/DamaLogo.png";
+    private String ImageDirectory = "src/resources/images/selection_icon/DamaLogo.png";
     
     public MainFrame() {
         initComponents();
@@ -32,8 +32,9 @@ public class MainFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        mainMenu = new component.Panel.MainMenu();
-        tutorial = new component.Panel.Tutorial();
+        component.Panel.MainMenu mainMenu = new component.Panel.MainMenu();
+        component.Panel.Tutorial tutorial = new component.Panel.Tutorial();
+        component.Panel.GamePlay gamePlay = new component.Panel.GamePlay();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Dama");
@@ -50,6 +51,7 @@ public class MainFrame extends javax.swing.JFrame {
         getContentPane().setLayout(new java.awt.CardLayout());
         getContentPane().add(mainMenu, "MainMenu");
         getContentPane().add(tutorial, "Tutorial");
+        getContentPane().add(gamePlay, "Game Play");
 
         getAccessibleContext().setAccessibleName("MainFrame");
 
@@ -73,7 +75,5 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private component.Panel.MainMenu mainMenu;
-    private component.Panel.Tutorial tutorial;
     // End of variables declaration//GEN-END:variables
 }

@@ -70,15 +70,21 @@ final class TilePanelSystem implements MouseListener {
     
     // Configurations: Select the starting point of the player move
     private void setStartingPoint() {
+        if (getGameBoard().getTile(getCoordinate()).getPiece().getAlliance() !=
+            getGameBoard().getCurrentPlayer().getAlliance())
+            return;
+            
         getTable().sourceTile = getGameBoard().getTile(getCoordinate()); // Set Source tile
         getTable().selectedPiece = getTable().sourceTile.getPiece(); // Set Selected Piece
 
         // Check if Tile is not Occupied -> Piece == null
-        if (!getTable().sourceTile.isOccupied()) 
+        if (!getTable().sourceTile.isOccupied()) {
             getTable().sourceTile = null;
+        }
         else {
             SwingUtilities.invokeLater(() -> {
-                getBoardPanel().highlightMoves(getTable().selectedPiece, getGameBoard());
+                getBoardPanel().drawBoard(getGameBoard());
+                getBoardPanel().drawGuidance(getTable().selectedPiece, getGameBoard());
             });
         }
     }
@@ -94,8 +100,7 @@ final class TilePanelSystem implements MouseListener {
             getTable().selectedPiece = getTable().destinationTile.getPiece();
             getTable().destinationTile = null;
             SwingUtilities.invokeLater(() -> {
-                getBoardPanel().drawBoard(getGameBoard());
-                getBoardPanel().highlightMoves(getTable().selectedPiece, getGameBoard());
+                getBoardPanel().drawGuidance(getTable().selectedPiece, getGameBoard());
             });
         }
     }
@@ -119,8 +124,8 @@ final class TilePanelSystem implements MouseListener {
                 getTable().selectedPiece = getTable().sourceTile.getPiece();
                 getTable().destinationTile = null;
                 SwingUtilities.invokeLater(() -> {
-                    getBoardPanel().drawBoard(getGameBoard());
-                    getBoardPanel().highlightMoves(getTable().selectedPiece, getGameBoard());
+                    getBoardPanel().drawGuidance(getTable().selectedPiece, getGameBoard());
+                    getBoardPanel().highlightLatestMove(getGameBoard());
                 });
                 return;
             }
@@ -133,8 +138,8 @@ final class TilePanelSystem implements MouseListener {
     // Configurations: Check the result after a move
     private void validateMove() {
         
-        // Check if current player has no pieces
-        if (getGameBoard().getCurrentPlayer().isLooser()) {
+        // Check if current player has no pieces or if current player has no moves
+        if (getGameBoard().getCurrentPlayer().isLooser() || getGameBoard().getCurrentPlayer().isStalemate()) {
             if (getTable().getGameBoard().getCurrentPlayer().getOpponent().getAlliance().isWhite()) {
                 getTable().status = Table.Status.WHITE_PLAYER_WIN;
             }
@@ -146,19 +151,7 @@ final class TilePanelSystem implements MouseListener {
             getBoardPanel().disableBoard();
             getDragGlassPane().showGameEnd(getTable().status, getTable());
         }
-        // Check if current player has no moves
-        else if (getGameBoard().getCurrentPlayer().isStalemate()) {
-            if (getTable().getGameBoard().getCurrentPlayer().getOpponent().getAlliance().isWhite()) {
-                getTable().status = Table.Status.WHITE_PLAYER_WIN;
-            }
-            else {
-                getTable().status = Table.Status.BLACK_PLAYER_WIN;
-            }
-            
-            getTable().stopPlayerTimer();
-            getBoardPanel().disableBoard();
-            getDragGlassPane().showGameEnd(getTable().status, getTable());
-        }
+        // Check if game was not progressing
         else if (getGameBoard().calculate50LatestMove(getTable().getGamePlay()).isEmpty()) {
             getTable().status = Table.Status.STALEMATE;
             
@@ -167,7 +160,7 @@ final class TilePanelSystem implements MouseListener {
             getDragGlassPane().showGameEnd(getTable().status, getTable());
         }
         // Flip board game play
-        else if (GameInfo.isChangingTurn) {
+        else if (GameInfo.CAN_CHANGE_TURN) {
             getBoardPanel().setDirection(getBoardPanel().getCurrentDirection().opposite());
             getTable().reversePlayer();
         }
@@ -180,6 +173,7 @@ final class TilePanelSystem implements MouseListener {
         getTable().destinationTile = null;
         SwingUtilities.invokeLater(() -> {
             getBoardPanel().drawBoard(getGameBoard());
+            getBoardPanel().highlightLatestMove(getGameBoard());
         });
     }
     
@@ -266,6 +260,9 @@ final class TilePanelSystem implements MouseListener {
                             getBoardPanel().drawBoard(getGameBoard());
                         });
                         setStartingPoint();
+                        SwingUtilities.invokeLater(() -> {
+                            getBoardPanel().highlightLatestMove(getGameBoard());
+                        });
                         return;
                     }
                     

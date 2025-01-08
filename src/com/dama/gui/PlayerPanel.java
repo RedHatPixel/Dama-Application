@@ -48,6 +48,7 @@ public final class PlayerPanel extends JPanel {
         setVisible(true);
         setPreferredSize(PREFERRED_SIZE);
         setMinimumSize(getPreferredSize());
+        setMaximumSize(getPreferredSize());
         setName("Player");
         setRequestFocusEnabled(false);
         
@@ -68,7 +69,7 @@ public final class PlayerPanel extends JPanel {
         timerLabel.setHorizontalAlignment(JLabel.RIGHT);
         timerLabel.setVerticalAlignment(JLabel.CENTER);
         timerLabel.setOpaque(true);
-        timerLabel.setPreferredSize(new Dimension(100, 10));
+        timerLabel.setPreferredSize(new Dimension(100, 50));
         timerLabel.setMaximumSize(timerLabel.getPreferredSize());
         timerLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
         timerLabel.setFont(FontManager.getFont(
@@ -76,7 +77,7 @@ public final class PlayerPanel extends JPanel {
         
         JPanel timerPanel = new JPanel(new BorderLayout());
         timerPanel.setOpaque(false);
-        timerPanel.setBorder(BorderFactory.createEmptyBorder(8, 0, 8, 10));
+        timerPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 12));
         timerPanel.add(timerLabel, BorderLayout.CENTER);
         
         add(nameLabel, BorderLayout.WEST);
@@ -109,7 +110,7 @@ public final class PlayerPanel extends JPanel {
         this.remainingTime = gameDuration.getTime();
         timerLabel.setText(getTimerToString());
         
-        if (gameDuration == GameDuration.NULL) return;
+        if (gameDuration == GameDuration.NULL || gameDuration == GameDuration.NO_TIMER) return;
 
         this.timer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -133,7 +134,7 @@ public final class PlayerPanel extends JPanel {
                     timer.cancel();
                 }
             }
-        }, 3000, 1000);
+        }, 2000, 1000);
         pauseTimer();
     }
     

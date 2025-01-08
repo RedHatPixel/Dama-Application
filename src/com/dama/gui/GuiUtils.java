@@ -17,7 +17,8 @@ public final class GuiUtils {
     // Static Variables
     private static final String FILE_DIRECTORY = "src/resources/images/pieces/";
     private static final List<Integer> SPECIFIED_SIZES = 
-            Arrays.asList(10, 15, 30, 45, 60, 75, 90, 105, 120, 135, 150, 165, 180);
+            Arrays.asList(10, 20, 30, 40, 50, 60, 70, 80, 
+                    90, 100, 110, 120, 130,140, 150, 160);
     private static final Map<String, ImageIcon> IMAGE_CACHE = new HashMap<>();
     private static final Map<String, ImageIcon> IMAGE_SIZE_CACHE = new HashMap<>();
     

@@ -51,7 +51,6 @@ public final class BoardPanel extends JPanel {
         this.thickness = calculateThickness();
         this.lastSize = getSize();
         this.direction = Direction.NORMAL;
-        
         initComponents();
         displayTilePanels();
     }
@@ -82,18 +81,22 @@ public final class BoardPanel extends JPanel {
             if (rootPane != null) {
                 rootPane.setGlassPane(dragGlassPane);
                 dragGlassPane.setVisible(true);
-                dragGlassPane.showGameStart(table);
+                
+                if (GameInfo.GAME_DURATION != GameInfo.GameDuration.NULL)
+                    dragGlassPane.showGameStart(table);
             }
         });
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {        
                 if (!getSize().equals(lastSize)) {
-                        updateBorder();
-                        lastSize = getSize();
+                    updateBorder();
+                    dragGlassPane.setBoardLocation();
+                    lastSize = getSize();
                 }
             }
         });
+        
         validate();
         repaint();
     }
@@ -156,6 +159,7 @@ public final class BoardPanel extends JPanel {
         for (final TilePanel tilePanel : boardTiles.values()) {
             tilePanel.disableTile();
         }
+        GameInfo.resetSetting();
         validate();
         repaint();
     }
@@ -176,14 +180,28 @@ public final class BoardPanel extends JPanel {
     }
     
     /**
-     * Display the possible moves of a selected piece
+     * Display the possible movement of the piece
      * USED: for the system(TilePanel) only -> same package only
      * @param piece Piece
      * @param gameBoard Board
      */
-    void highlightMoves(final Piece piece, final Board board) {
+    void drawGuidance(final Piece piece, final Board board) {
         for (final TilePanel tilePanel : boardTiles.values()) {
-            tilePanel.drawHighlight(piece, board);
+            tilePanel.drawGuidance(piece, board);
+        }
+        validate();
+        repaint();
+    }
+    
+    /**
+     * Display the latest moves of the piece
+     * USED: for the system(TilePanel) only -> same package only
+     * @param piece Piece
+     * @param gameBoard Board
+     */
+    void highlightLatestMove(final Board board) {
+        for (final TilePanel tilePanel : boardTiles.values()) {
+            tilePanel.drawHighlight(board);
         }
         validate();
         repaint();
@@ -217,7 +235,7 @@ public final class BoardPanel extends JPanel {
         validate();
         repaint();
     }
-    
+
     // Enum State: The Direction of the board
     static enum Direction {
         NORMAL {

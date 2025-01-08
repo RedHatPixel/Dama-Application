@@ -29,6 +29,7 @@ final class TilePanel extends JPanel {
     private static final Dimension PREFERRED_SIZE = new Dimension(62, 62);
     private static final Color TILE_THREATEN = new Color(212, 58, 47);
     private static final Color TILE_MOVED = new Color(252, 250, 88);
+    private static final Color TILE_CAN_MOVE = new Color(114, 238, 114);
     private static final Color TILE_WHITE = new Color(210, 180, 140);
     private static final Color TILE_BLACK = new Color(160, 81, 45);
     private static final String DOT_IMAGE = "dot";
@@ -44,6 +45,7 @@ final class TilePanel extends JPanel {
     private boolean threaten;
     private boolean selected;
     private boolean assigned;
+    private boolean approval;
     
     // Constructor: Define each tile panel to display in board
     TilePanel(final BoardPanel boardPanel, final Position coordinate) {
@@ -74,9 +76,8 @@ final class TilePanel extends JPanel {
         setOpaque(true);
         setDoubleBuffered(true);
         setRequestFocusEnabled(false);
-        
         // WARNING: Remove Button Functionality -> Table == null
-        if (table != null)  {
+        if (table != null || GameInfo.GAME_DURATION == GameInfo.GameDuration.NULL)  {
             assignTilePieceIcon(boardPanel.getTable().getGameBoard());
             addMouseListener(tilePanelSystem);
             addComponentListener(new ComponentAdapter() {
@@ -113,27 +114,47 @@ final class TilePanel extends JPanel {
         selected = false;
         assigned = false;
         threaten = false;
-        highlightTileFinalMove(board);
-        highlightTileBackgroundCaptures(board);
+        approval = false;
+        highlightMovablePiece(board);
         assignTilePieceIcon(board);
         setBackgroundRespectiveColor();
         initializeAndResizeTileIcon();
     }
     
     /**
-     * Show the possible movement
+     * Show the after movement
+     * USED: for the manager(BoardPanel) only -> same package only
+     * @param board Board
+     */
+    void drawHighlight(final Board board) {
+        assigned = false;
+        highlightTileFinalMove(board);
+        setBackgroundRespectiveColor();
+        initializeAndResizeTileIcon();
+    }
+    
+    /**
      * USED: for the manager(BoardPanel) only -> same package only
      * @param piece Piece
      * @param board Board
      */
-    void drawHighlight(final Piece piece, final Board board) {
+    void drawGuidance(final Piece piece, final Board board) {
         selected = false;
+        threaten = false;
+        approval = false;
         highlightTilePiece(piece, board);
+        highlightTileBackgroundCaptures(piece, board);
+        assignTilePieceIcon(board);
         assignTileSelectionIcon(piece, board);
         setBackgroundRespectiveColor();
         initializeAndResizeTileIcon();
     }
     
+    
+    /**
+     * Disable the tile functionality
+     * USED: for the manager(BoardPanel) only -> same package only
+     */
     void disableTile() {
         removeMouseListener(tilePanelSystem);
         for (final MouseMotionListener comp : this.getMouseMotionListeners()) {
@@ -150,6 +171,7 @@ final class TilePanel extends JPanel {
                 BoardUtils.TILES_PATTERN[this.coordinate.x()][this.coordinate.y()] ? TILE_BLACK : TILE_WHITE;
         setBackground(
                 threaten ? TILE_THREATEN :
+                approval ? TILE_CAN_MOVE :
                 assigned ? TILE_MOVED :
                 (selected || tilePanelSystem.pressed()) ? background.darker() :
                 tilePanelSystem.hover() ? background.brighter() : background);
@@ -195,28 +217,41 @@ final class TilePanel extends JPanel {
     private void highlightTilePiece(final Piece piece, final Board board) {
         if (piece == null) return;
         if (piece.getPosition().equals(coordinate) && 
-                 piece.getAlliance().equals(board.getCurrentPlayer().getAlliance())) {
+            piece.getAlliance().equals(board.getCurrentPlayer().getAlliance())) {
             selected = true;
+        }
+    }
+    
+    // Configuration: Highlight the tiles background if the piece can be move
+    private void highlightMovablePiece(final Board board) {
+        if (!GameInfo.CAN_SHOW_MOVABLE_PIECE) return;
+        for (final Move move : board.getCurrentPlayer().getLegalMoves()) {
+            if (move.getMovedPiece().getPosition().equals(coordinate) &&
+                board.getTile(coordinate).isOccupied()) {
+                if (board.getCurrentPlayer().isForceCapture() && !move.getType().canAttack()) break;
+                approval = true;
+            }
         }
     }
     
     // Configuration: Highlight the tiles background if the piece was the latest move
     private void highlightTileFinalMove(final Board board) {
-        if (board.getLatestMove() == null) return;
+        if (board.getLatestMove() == null || !GameInfo.CAN_SHOW_LATEST_MOVE) return;
         if (board.getLatestMove().getCurrentCoordinate().equals(coordinate) ||
             board.getLatestMove().getLandingCoordinate().equals(coordinate))
             assigned = true;
     }
     
     // Configuration: Highlight the tiles background if the piece in it can be capture
-    private void highlightTileBackgroundCaptures(final Board board) {
-        if (!GameInfo.showCapturable) return;
-        for (final Move move : board.getCurrentPlayer().getLegalMoves()) {
+    private void highlightTileBackgroundCaptures(final Piece piece, final Board board) {
+        if (piece == null || !GameInfo.CAN_SHOW_CAPTURES) return;
+        else if (piece.getAlliance() != board.getCurrentPlayer().getAlliance()) return;
+        for (final Move move : piece.calculateLegalMoves(board)) {
             if (move.getType().canAttack()) {
                 if (board.getLatestMove().getType().canAttackAgain() &&
-                    move.getType().canAttack() &&
                     !board.getLatestMovedPiece().equals(move.getMovedPiece()))
-                    continue;
+                    break;
+                
                 if (move instanceof AttackMove) {
                     AttackMove attackMove = (AttackMove) move;
                     if (attackMove.getAtackedPiece().getPosition().equals(coordinate)) {
@@ -224,10 +259,11 @@ final class TilePanel extends JPanel {
                         break;
                     }
                 }
+                
                 if (move instanceof MultipleAttackMove) {
                     MultipleAttackMove multiAttackMove = (MultipleAttackMove) move;
-                    for (Piece piece : multiAttackMove.getAttackedPieces()) {
-                        if (piece.getPosition().equals(coordinate)) {
+                    for (final Piece pieces : multiAttackMove.getAttackedPieces()) {
+                        if (pieces.getPosition().equals(coordinate)) {
                             threaten = true;
                             break;
                         }
@@ -239,7 +275,7 @@ final class TilePanel extends JPanel {
     
     // Configuration: Highlight the tiles if it can be move
     private void assignTileSelectionIcon(final Piece piece, final Board board) {
-        if (piece == null || !GameInfo.showValidMoves) return;
+        if (piece == null || !GameInfo.CAN_SHOW_VALID_MOVES) return;
         else if (board.getTile(coordinate).isOccupied()) return;
         else if (piece.getAlliance() != board.getCurrentPlayer().getAlliance()) return;
         image = "";

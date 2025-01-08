@@ -11,6 +11,7 @@ import java.awt.GridBagLayout;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import javax.swing.BorderFactory;
 
 import javax.swing.JPanel;
 
@@ -43,19 +44,21 @@ public final class Table extends JPanel {
         this.gamePlay.add(gameBoard);
         this.reversed = false;
         
+        if (GameInfo.GAME_DURATION == GameInfo.GameDuration.NULL)
+            boardPanel.disableBoard();
+        
         if (GameInfo.BOARD_DIRECTION == GameInfo.GameSwitch.NORMAL) {
             this.boardPanel.setDirection(BoardPanel.Direction.NORMAL);
-            this.bottomPlayerPanel = new PlayerPanel(this, gameBoard.getBlackPlayer(), GameInfo.BottomPlayerName);
-            this.topPlayerPanel = new PlayerPanel(this, gameBoard.getWhitePlayer(), GameInfo.TopPlayerName);
+            this.bottomPlayerPanel = new PlayerPanel(this, gameBoard.getWhitePlayer(), GameInfo.BOTTOM_PLAYER_NAME);
+            this.topPlayerPanel = new PlayerPanel(this, gameBoard.getBlackPlayer(), GameInfo.TOP_PLAYER_NAME);
         } else {
             this.boardPanel.setDirection(BoardPanel.Direction.FLIPPED);
-            this.bottomPlayerPanel = new PlayerPanel(this, gameBoard.getWhitePlayer(), GameInfo.BottomPlayerName);
-            this.topPlayerPanel = new PlayerPanel(this, gameBoard.getBlackPlayer(), GameInfo.TopPlayerName);
+            this.bottomPlayerPanel = new PlayerPanel(this, gameBoard.getBlackPlayer(), GameInfo.BOTTOM_PLAYER_NAME);
+            this.topPlayerPanel = new PlayerPanel(this, gameBoard.getWhitePlayer(), GameInfo.TOP_PLAYER_NAME);
         }
-        
-        this.bottomPlayerPanel.startTimer(GameInfo.duration);
-        this.topPlayerPanel.startTimer(GameInfo.duration);
-        
+
+        this.bottomPlayerPanel.startTimer(GameInfo.GAME_DURATION);
+        this.topPlayerPanel.startTimer(GameInfo.GAME_DURATION);
         initComponents();
     }
 
@@ -69,6 +72,7 @@ public final class Table extends JPanel {
         setPreferredSize(PREFERRED_SIZE);
         setMinimumSize(getPreferredSize());
         setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
+        setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
         setName("Table");
         setRequestFocusEnabled(false);
         addComponents(bottomPlayerPanel, topPlayerPanel);
