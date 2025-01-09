@@ -69,7 +69,7 @@ public class MainFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_formWindowClosing
 
-    public void setDirectory(Directory.Panel panel) {
+    public void setDirectory(final Directory.Panel panel) {
         CardLayout layout = (CardLayout) getContentPane().getLayout();
         layout.show(getContentPane(), panel.getName());
     }

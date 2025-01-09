@@ -80,7 +80,8 @@ public final class Directory {
     }
     
     public enum ParentName {
-        MAIN_FRAME("MainFrame");
+        MAIN_FRAME("MainFrame"),
+        CONTROL_SYSTEM("controlSystem");
         
         private String name;
         
@@ -96,7 +97,10 @@ public final class Directory {
     public enum Panel {
         MAIN_MENU("MainMenu"),
         TUTORIAL("Tutorial"),
-        GAME_PLAY("Game Play");
+        GAME_PLAY("Game Play"),
+        
+        PLAYER_SETTING("Gameplay"),
+        MULTIPLAYER_SETTING("Multiplayer");
         
         private String name;
         

@@ -171,8 +171,8 @@ final class TilePanel extends JPanel {
                 BoardUtils.TILES_PATTERN[this.coordinate.x()][this.coordinate.y()] ? TILE_BLACK : TILE_WHITE;
         setBackground(
                 threaten ? TILE_THREATEN :
-                approval ? TILE_CAN_MOVE :
-                assigned ? TILE_MOVED :
+                (approval) ? TILE_CAN_MOVE :
+                (assigned && !image.equals(DOT_IMAGE)) ? TILE_MOVED :
                 (selected || tilePanelSystem.pressed()) ? background.darker() :
                 tilePanelSystem.hover() ? background.brighter() : background);
     }
