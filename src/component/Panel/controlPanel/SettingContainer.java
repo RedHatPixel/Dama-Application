@@ -1,11 +1,10 @@
 package component.Panel.controlPanel;
-import component.Panel.CardLayoutManager;
+import component.Panel.CardHandlers.PanelCardManager;
 
-public class SettingContainer extends CardLayoutManager {
+public class SettingContainer extends PanelCardManager {
     public SettingContainer() {
         super();
         initComponents();
-        
     }
 
     @SuppressWarnings("unchecked")

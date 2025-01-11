@@ -1,8 +1,11 @@
-package com.dama.gui;
+package com.dama.gui.game_panel;
 
 import com.dama.engine.board.Board;
 import com.dama.engine.board.Tile;
+import com.dama.engine.dependencies.Alliance;
 import com.dama.engine.pieces.Piece;
+import com.dama.gui.GameInfo;
+import com.dama.sound.SoundManager;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -22,43 +25,49 @@ public final class Table extends JPanel {
     private static final Color BACKGROUND_COLOR = new Color(48, 46, 43);
 
     // Define Variables
-    private final List<Board> gamePlay;
     private final BoardPanel boardPanel;
     private final PlayerPanel bottomPlayerPanel;
     private final PlayerPanel topPlayerPanel;
-    private boolean reversed;
+    
+    private final List<Board> gamePlay;
+    private int currentGameStateIndex;
+    
     private Board gameBoard;
+    private boolean reversed;
 
     // Players Selection -> Tiles, Piece  -> same package only
-    Tile sourceTile;
-    Tile destinationTile;
-    Piece selectedPiece;
-    Status status;
+    private Tile sourceTile;
+    private Tile destinationTile;
+    private Piece selectedPiece;
+    private Status status;
 
     // Constructor: Define a system of graphical game interface
     public Table() {
         super(new GridBagLayout());
         this.gamePlay = new ArrayList<>();
+        this.currentGameStateIndex = 0;
         this.gameBoard = Board.createStandardBoard();
         this.boardPanel = new BoardPanel(this);
-        this.gamePlay.add(gameBoard);
         this.reversed = false;
+        this.gamePlay.add(gameBoard);
         
-        if (GameInfo.GAME_DURATION == GameInfo.GameDuration.NULL)
+        if (GameInfo.getGameDuration() == GameInfo.GameDuration.NULL)
             boardPanel.disableBoard();
-        
-        if (GameInfo.BOARD_DIRECTION == GameInfo.GameSwitch.NORMAL) {
+        else
+            SoundManager.Sounds.GAME_START_SOUND.play();
+            
+        if (GameInfo.getDirection() == GameInfo.GameSwitch.NORMAL) {
             this.boardPanel.setDirection(BoardPanel.Direction.NORMAL);
-            this.bottomPlayerPanel = new PlayerPanel(this, gameBoard.getWhitePlayer(), GameInfo.BOTTOM_PLAYER_NAME);
-            this.topPlayerPanel = new PlayerPanel(this, gameBoard.getBlackPlayer(), GameInfo.TOP_PLAYER_NAME);
+            this.bottomPlayerPanel = new PlayerPanel(this, gameBoard.getWhitePlayer(), GameInfo.getBotttomPlayerName());
+            this.topPlayerPanel = new PlayerPanel(this, gameBoard.getBlackPlayer(), GameInfo.getTopPlayerName());
         } else {
             this.boardPanel.setDirection(BoardPanel.Direction.FLIPPED);
-            this.bottomPlayerPanel = new PlayerPanel(this, gameBoard.getBlackPlayer(), GameInfo.BOTTOM_PLAYER_NAME);
-            this.topPlayerPanel = new PlayerPanel(this, gameBoard.getWhitePlayer(), GameInfo.TOP_PLAYER_NAME);
+            this.bottomPlayerPanel = new PlayerPanel(this, gameBoard.getBlackPlayer(), GameInfo.getBotttomPlayerName());
+            this.topPlayerPanel = new PlayerPanel(this, gameBoard.getWhitePlayer(), GameInfo.getTopPlayerName());
         }
 
-        this.bottomPlayerPanel.startTimer(GameInfo.GAME_DURATION);
-        this.topPlayerPanel.startTimer(GameInfo.GAME_DURATION);
+        this.bottomPlayerPanel.startTimer(GameInfo.getGameDuration());
+        this.topPlayerPanel.startTimer(GameInfo.getGameDuration());
         initComponents();
     }
 
@@ -79,7 +88,7 @@ public final class Table extends JPanel {
     }
     
     // Configuration: Display the components of the Table
-    private void addComponents(final PlayerPanel bottomPlayer, final PlayerPanel topPlayer) {
+    public void addComponents(final PlayerPanel bottomPlayer, final PlayerPanel topPlayer) {
         removeAll();
         GridBagConstraints gridBagConstraints;
         gridBagConstraints = new GridBagConstraints();
@@ -116,82 +125,105 @@ public final class Table extends JPanel {
         add(bottomPlayer, gridBagConstraints);
     }
     
-    /**
-     * Get the game engine
-     * USED: to retrieve this to the control system [BoardPanel]  -> same package only
-     * @return Board
-     */
-    Board getGameBoard() {
-        return this.gameBoard;
+    //-------------Helper_Methods---------------//
+    
+    // Table Current Player Selection:
+    public Tile getSourceTile() {
+        return this.sourceTile;
     }
     
-    /**
-     * Get the game history
-     * USED: to retrieve this to the control system [BoardPanel]  -> same package only
-     * @return List of Board
-     */
-    List<Board> getGamePlay() {
+    public void setSourceTile(final Tile tile) {
+        this.sourceTile = tile;
+    }
+    
+    public Tile getDestinationTile() {
+        return this.destinationTile;
+    }
+    
+    public void setDestinationTile(final Tile tile) {
+        this.destinationTile = tile;
+    }
+    
+    public Piece getSelectedPiece() {
+        return this.selectedPiece;
+    }
+    
+    public void setSelectedPiece(final Piece piece) {
+        this.selectedPiece = piece;
+    }
+    
+    // Table Current Status:
+    public Status getStatus() {
+        return this.status;
+    }
+    
+    public void setStatus(final Status status) {
+        this.status = status;
+    } 
+    
+    public boolean isReversed() {
+        return this.reversed;
+    }
+    
+    public void reverse(boolean bool) {
+        this.reversed = bool;
+    }
+    
+    public int getCurrentGameStateIndex() {
+        return this.currentGameStateIndex;
+    }
+    
+    public void setCurrentGameStateIndex(int index) {
+        this.currentGameStateIndex = index;
+    }
+    
+    public boolean isOnGame() {
+        return this.currentGameStateIndex == gamePlay.size() - 1;
+    }
+    
+    public boolean gameEnded() {
+        return this.status != null;
+    }
+    
+    // Table Variables Getters:
+    public List<Board> getGamePlay() {
         return Collections.unmodifiableList(this.gamePlay);
     }
     
-    /**
-     * Get the game GUI
-     * USED: to retrieve this to the control system [BoardPanel]  -> same package only
-     * @return Board
-     */
-    BoardPanel getBoardPanel() {
+    public void addBoardToGamePlay(final Board board) {
+        this.gamePlay.add(board);
+    }
+    
+    public void removeBoardToGamePlay(final int index) {
+        this.gamePlay.remove(index);
+    }
+    
+    public Board getGameBoard() {
+        return this.gameBoard;
+    }
+    
+    public void setGameBoard(final Board board) {
+        this.gameBoard = board;
+    }
+
+    public BoardPanel getBoardPanel() {
         return this.boardPanel;
     }
     
-    /**
-     * Get the game GUI top player
-     * USED: for the system(TilePanel) only -> same package only
-     * @return PlayerPanel
-     */
-    PlayerPanel getTopPlayerPanel() {
+    public PlayerPanel getTopPlayerPanel() {
         return this.topPlayerPanel;
     }
     
-    /**
-     * Get the game GUI bottom player
-     * USED: for the system(TilePanel) only -> same package only
-     * @return PlayerPanel
-     */
-    PlayerPanel getBottomPlayerPanel() {
+    public PlayerPanel getBottomPlayerPanel() {
         return this.bottomPlayerPanel;
     }
     
-    /**
-     * Set the game engine of the Game
-     * USED: to set a new line of boards by Board.builder()  -> same package only
-     * @param board Board
-     */
-    void setGameBoard(final Board board) {
-        this.gamePlay.add(board);
-        this.gameBoard = board;
-    }
-    
-    /**
-     * Reverse the player display from top to bottom, bottom to top
-     * USED: for the system(TilePanel) only -> same package only
-     */
-    void reversePlayer() {
-        reversed = !reversed;
-        if (reversed)
-            addComponents(this.topPlayerPanel, this.bottomPlayerPanel);
-        else
-            addComponents(this.bottomPlayerPanel, this.topPlayerPanel);
-        revalidate();
-        repaint();
-    }
-    
-    /**
-     * Stop Timer function when game ends
-     * USED: for the system(TilePanel) only -> same package only
-     */
-    void stopPlayerTimer() {
-        this.topPlayerPanel.stopTimer();
-        this.bottomPlayerPanel.stopTimer();
+    public PlayerPanel getCurrentPlayerPanel() {
+        Alliance alliance = gameBoard.getCurrentPlayer().getAlliance();
+        if (topPlayerPanel.getPlayer().getAlliance() == alliance) {
+            return topPlayerPanel;
+        }
+        return bottomPlayerPanel;
     }
     
     // Enum State: The Status of the game

@@ -1,9 +1,9 @@
 package component.Panel;
 
+import component.Panel.CardHandlers.CardPanelRegistry;
 import utilities.CommonConstants;
-import utilities.Directory;
 
-public abstract class BasePanel extends javax.swing.JPanel implements Direction {
+public abstract class BasePanel extends CardPanelRegistry {
 
     public BasePanel() {
         initComponents();
@@ -12,16 +12,20 @@ public abstract class BasePanel extends javax.swing.JPanel implements Direction 
         setMaximumSize(CommonConstants.MAX_SIZE);
         setMinimumSize(CommonConstants.MIN_SIZE);
         setPreferredSize(CommonConstants.PREFFERED_SIZE);
-        setDirectName();
         
-        this.revalidate();
-        this.repaint();
+        initialize();
+        validate();
+        repaint();
     }
     
     @Override
-    public void setDirectName() {
-        
-        this.setName(Directory.Panel.MAIN_MENU.getName());
+    protected void configurePanel() {
+        System.err.println("An abstract class should not be initialize.");
+    }
+
+    @Override
+    public String getPanelName() {
+        return "Base Panel";
     }
 
     @SuppressWarnings("unchecked")

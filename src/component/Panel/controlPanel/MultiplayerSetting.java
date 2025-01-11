@@ -1,22 +1,16 @@
 package component.Panel.controlPanel;
 
 import com.dama.gui.GameInfo;
-import com.dama.gui.Table;
-import component.Panel.CardLayoutManager;
-import component.Panel.CardPanelSingleton;
-import component.Panel.GamePlay;
-
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.event.ItemEvent;
-import javax.swing.BorderFactory;
 import utilities.FontManager;
+import component.Panel.CardHandlers.*;
+import component.Panel.*;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
 
-public class MultiplayerSetting extends CardPanelSingleton {
+public class MultiplayerSetting extends CardPanelRegistry {
 
     public MultiplayerSetting() {
-        super();
-        initialize();
         initComponents();
         
         title.setFont(FontManager.getFont(FontManager.FontName.POPPINS_BLACK, FontManager.FontType.POPPINS, title.getFont().getSize()));
@@ -26,13 +20,13 @@ public class MultiplayerSetting extends CardPanelSingleton {
                 jLabel.setFont(FontManager.getFont(
                         FontManager.FontName.POPPINS_BLACK, FontManager.FontType.POPPINS, jLabel.getFont().getSize()));
             }
-            else if (comp instanceof javax.swing.JRadioButton) {
-                javax.swing.JRadioButton jRadioButton = (javax.swing.JRadioButton) comp;
+            else if (comp instanceof JRadioButton) {
+                JRadioButton jRadioButton = (JRadioButton) comp;
                 jRadioButton.setFont(FontManager.getFont(
                         FontManager.FontName.POPPINS_BOLD, FontManager.FontType.POPPINS, jRadioButton.getFont().getSize()));
             }
-            else if (comp instanceof javax.swing.JTextField) {
-                javax.swing.JTextField jTextField = (javax.swing.JTextField) comp;
+            else if (comp instanceof JTextField) {
+                JTextField jTextField = (JTextField) comp;
                 jTextField.setFont(FontManager.getFont(
                         FontManager.FontName.POPPINS_MEDIUM, FontManager.FontType.POPPINS, jTextField.getFont().getSize()));
             }
@@ -55,22 +49,23 @@ public class MultiplayerSetting extends CardPanelSingleton {
         bulletRadio.setSelected(true);
         whiteRadio.setSelected(true);
         
-        revalidate();
+        initialize();
+        validate();
         repaint();
     }
     
     @Override
-    protected void setDirectName() {
-        if (CardLayoutManager.isInstanced(SettingContainer.class))
-            CardLayoutManager.getInstance(SettingContainer.class).registerPanel(this, getDirectName());
+    protected void configurePanel() {
+        if (!CardLayoutManager.DESIGN_TIME)
+            CardLayoutManager.getInstance(SettingContainer.class).registerPanel(this, getName());
     }
-    
+
     @Override
-    public String getDirectName() {
+    public String getPanelName() {
         return "Multiplayer Setting";
     }
 
-    private void updateAllianceAppearance(final javax.swing.JRadioButton button, final ItemEvent e) {
+    private void updateAllianceAppearance(final JRadioButton button, final ItemEvent e) {
         if (e.getStateChange() == ItemEvent.SELECTED) {
             button.setBackground(new Color(102,102,102));
         } else {
@@ -78,7 +73,7 @@ public class MultiplayerSetting extends CardPanelSingleton {
         }
     }
     
-    private void updateDurationAppearance(final javax.swing.JRadioButton button, final ItemEvent e) {
+    private void updateDurationAppearance(final JRadioButton button, final ItemEvent e) {
         if (e.getStateChange() == ItemEvent.SELECTED) {
             button.setBorder(BorderFactory.createCompoundBorder(
                     BorderFactory.createMatteBorder(0, 5, 0, 0, new Color(102,102,102)),
@@ -92,7 +87,7 @@ public class MultiplayerSetting extends CardPanelSingleton {
         }
     }
     
-    private boolean limitStringCapacity(final javax.swing.JTextField textField) {
+    private boolean limitStringCapacity(final JTextField textField) {
         if (textField.getText().length() > 12) {
             textField.setText("");
             return true;
@@ -100,7 +95,7 @@ public class MultiplayerSetting extends CardPanelSingleton {
         return false;
     }
     
-    private void resetSelection() {
+    public void resetSelection() {
         playerOneName.setText("");
         playerTwoName.setText("");
         SelectedDuration.clearSelection();
@@ -642,9 +637,9 @@ public class MultiplayerSetting extends CardPanelSingleton {
 
     private void playerTwoNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playerTwoNameActionPerformed
         if (limitStringCapacity(playerTwoName))
-        playerTwoName.requestFocus();
+            playerTwoName.requestFocus();
         else if (playerOneName.getText().isBlank())
-        playerOneName.requestFocus();
+            playerOneName.requestFocus();
         else if (!playerTwoName.getText().isBlank()) {
             startButtonActionPerformed(evt);
             this.getRootPane().requestFocus();
@@ -653,9 +648,9 @@ public class MultiplayerSetting extends CardPanelSingleton {
 
     private void playerOneNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playerOneNameActionPerformed
         if (limitStringCapacity(playerOneName))
-        playerOneName.requestFocus();
+            playerOneName.requestFocus();
         else if (playerTwoName.getText().isBlank())
-        playerTwoName.requestFocus();
+            playerTwoName.requestFocus();
         else if (!playerOneName.getText().isBlank()) {
             startButtonActionPerformed(evt);
             this.getRootPane().requestFocus();
@@ -696,16 +691,22 @@ public class MultiplayerSetting extends CardPanelSingleton {
         }
         
         GameInfo.setPlayerNames(playerTwoName.getText(), playerOneName.getText());
+        
         GameInfo.allowShowingCapturables(checkCaptures.isSelected());
         GameInfo.allowChangeTurn(checkChangeTurn.isSelected());
         GameInfo.allowShowingLatestMove(checkLatestMove.isSelected());
         GameInfo.allowShowingMovablePiece(checkMovePiece.isSelected());
         GameInfo.allowShowingMoves(checkMove.isSelected());
-        GamePlay.setNewTable(new Table());
         
-        final PlayerSetting playerSetting = PlayerSetting.getInstance(PlayerSetting.class);
-        CardLayoutManager.getInstance(SettingContainer.class).showPanel(playerSetting);
-        playerSetting.setGameInformation();
+        if (CardPanelRegistry.isInstanced(GamePlay.class)) {
+            CardPanelRegistry.getInstance(GamePlay.class).setNewTable();
+            
+            if (CardPanelRegistry.isInstanced(PlayerSetting.class)) {
+                final PlayerSetting playerSetting = CardPanelRegistry.getInstance(PlayerSetting.class);
+                CardLayoutManager.getInstance(SettingContainer.class).showPanel(playerSetting);
+                playerSetting.setGameInformation();
+            }
+        }
     }//GEN-LAST:event_startButtonActionPerformed
 
     private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed

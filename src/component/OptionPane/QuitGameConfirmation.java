@@ -9,7 +9,7 @@ import utilities.Configurations;
 import utilities.FontManager;
 import utilities.FontManager.*;
 
-public class QuitConfirmation extends JDialog {
+public class QuitGameConfirmation extends JDialog {
 
     /**
      * A return status code - returned if Cancel button has been pressed
@@ -19,7 +19,7 @@ public class QuitConfirmation extends JDialog {
     public static final int RET_NO = 0;
     public static final int RET_YES = 1;
     
-    public QuitConfirmation(final Frame parent, final boolean modal) {
+    public QuitGameConfirmation(final Frame parent, final boolean modal) {
         super(parent, modal);
         initComponents();
         setVisible(true);
@@ -56,13 +56,12 @@ public class QuitConfirmation extends JDialog {
         setTitle("Quit Confirmation");
         setIconImage(Configurations.loadImage(IMAGE_DIRECTORY));
         setBackground(new java.awt.Color(43, 42, 40));
-        setMinimumSize(new java.awt.Dimension(240, 180));
+        setMinimumSize(new java.awt.Dimension(280, 180));
         setName("quitDialog"); // NOI18N
-        setPreferredSize(new java.awt.Dimension(240, 180));
+        setPreferredSize(new java.awt.Dimension(280, 180));
         setResizable(false);
         setSize(new java.awt.Dimension(240, 180));
         setType(java.awt.Window.Type.POPUP);
-        
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent evt) {
@@ -81,7 +80,7 @@ public class QuitConfirmation extends JDialog {
                 FontName.POPPINS_REGULAR, FontType.POPPINS, 12));
         question.setForeground(new java.awt.Color(255, 255, 255));
         question.setHorizontalAlignment(SwingConstants.CENTER);
-        question.setText("Are you sure you want to quit?");
+        question.setText("Are you sure you want to quit the game?");
         question.setMaximumSize(new java.awt.Dimension(172, 70));
         question.setMinimumSize(new java.awt.Dimension(172, 70));
         question.setPreferredSize(new java.awt.Dimension(172, 70));
@@ -95,11 +94,8 @@ public class QuitConfirmation extends JDialog {
 
         yesButton.setText("Yes");
         yesButton.requestFocus();
-        yesButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-                yesButtonActionPerformed();
-            }
+        yesButton.addActionListener((ActionEvent evt) -> {
+            yesButtonActionPerformed();
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -108,11 +104,8 @@ public class QuitConfirmation extends JDialog {
         background.add(yesButton, gridBagConstraints);
 
         noButton.setText("No");
-        noButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-                noButtonActionPerformed();
-            }
+        noButton.addActionListener((ActionEvent evt) -> {
+            noButtonActionPerformed();
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;

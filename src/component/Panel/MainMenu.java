@@ -1,32 +1,39 @@
 package component.Panel;
 
+import component.Panel.CardHandlers.*;
+
 import utilities.CommonConstants;
-import utilities.Directory;
 import utilities.FontManager;
 import utilities.FontManager.*;
 import java.awt.Dimension;
+import main.MainFrame;
 
-public class MainMenu extends javax.swing.JPanel implements Direction {
+public final class MainMenu extends CardPanelRegistry {
 
     public MainMenu() {
         initComponents();
-        
         setFont(CommonConstants.DEFAULT_FONT);
         setMaximumSize(CommonConstants.MAX_SIZE);
         setMinimumSize(CommonConstants.MIN_SIZE);
         setPreferredSize(CommonConstants.PREFFERED_SIZE);
         setFooterSize();
-        setDirectName();
-        
+
         userName.setFont(FontManager.getFont(FontName.POPPINS_BLACK, FontType.POPPINS, 18));
         
-        this.revalidate();
-        this.repaint();
+        initialize();
+        validate();
+        repaint();
     }
     
     @Override
-    public void setDirectName() {
-        this.setName(Directory.Panel.TUTORIAL.getName());
+    protected void configurePanel() {
+        if (!CardLayoutManager.DESIGN_TIME)
+            CardLayoutManager.getInstance(MainFrame.class).registerPanel(this, getName());
+    }
+
+    @Override
+    public String getPanelName() {
+        return "Main Menu";
     }
 
     @SuppressWarnings("unchecked")
@@ -56,7 +63,7 @@ public class MainMenu extends javax.swing.JPanel implements Direction {
         setFocusable(false);
         setMaximumSize(new java.awt.Dimension(1200, 700));
         setMinimumSize(new java.awt.Dimension(950, 600));
-        setName("MainMenu"); // NOI18N
+        setName("Main Menu"); // NOI18N
         setPreferredSize(new java.awt.Dimension(950, 600));
         setLayout(new java.awt.BorderLayout());
         add(navigator, java.awt.BorderLayout.WEST);
@@ -214,7 +221,7 @@ public class MainMenu extends javax.swing.JPanel implements Direction {
 
         add(mainScrollPane, java.awt.BorderLayout.CENTER);
 
-        getAccessibleContext().setAccessibleName("MainMenu");
+        getAccessibleContext().setAccessibleName("Main Menu");
     }// </editor-fold>//GEN-END:initComponents
 
     private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed

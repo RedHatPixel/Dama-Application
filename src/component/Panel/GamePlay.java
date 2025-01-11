@@ -1,10 +1,15 @@
 package component.Panel;
 
-import com.dama.gui.Table;
-import utilities.CommonConstants;
-import utilities.Directory;
+import com.dama.gui.game_panel.Table;
+import component.OptionPane.QuitGameConfirmation;
+import component.Panel.CardHandlers.CardLayoutManager;
 
-public class GamePlay extends javax.swing.JPanel implements Direction {
+import component.Panel.CardHandlers.CardPanelRegistry;
+import main.MainFrame;
+
+import utilities.CommonConstants;
+
+public class GamePlay extends CardPanelRegistry {
 
     public GamePlay() {
         initComponents();
@@ -12,29 +17,34 @@ public class GamePlay extends javax.swing.JPanel implements Direction {
         setMaximumSize(CommonConstants.MAX_SIZE);
         setMinimumSize(CommonConstants.MIN_SIZE);
         setPreferredSize(CommonConstants.PREFFERED_SIZE);
-        setDirectName();
-        
-        this.validate();
-        this.repaint();
+        initialize();
+        validate();
+        repaint();
     }
     
     @Override
-    public void setDirectName() {
-        this.setName(Directory.Panel.GAME_PLAY.getName());
+    protected void configurePanel() {
+        if (!CardLayoutManager.DESIGN_TIME)
+            CardLayoutManager.getInstance(MainFrame.class).registerPanel(this, getName());
+    }
+
+    @Override
+    public String getPanelName() {
+        return "Game Play";
     }
     
-    public static void setNewTable(final Table table) {
-        GamePlay.table = table;
+    public void setNewTable() {
         if (tableContainer != null) {
+            table = new Table();
             tableContainer.removeAll();
-            tableContainer.add(table, java.awt.BorderLayout.CENTER);
+            tableContainer.add(table);
             tableContainer.revalidate();
             tableContainer.repaint();
         }
     }
     
-    public static Table getTable() {
-        return GamePlay.table;
+    public Table getTable() {
+        return table;
     }
 
     @SuppressWarnings("unchecked")
@@ -45,7 +55,7 @@ public class GamePlay extends javax.swing.JPanel implements Direction {
         navigator = new component.Panel.subPanel.Navigator();
         mainBody = new javax.swing.JPanel();
         tableContainer = new javax.swing.JPanel();
-        table = new com.dama.gui.Table();
+        table = new com.dama.gui.game_panel.Table();
         javax.swing.JPanel settingBG = new javax.swing.JPanel();
         component.Panel.controlPanel.SettingContainer settingContainer = new component.Panel.controlPanel.SettingContainer();
         component.Panel.controlPanel.MultiplayerSetting multiplayerSetting = new component.Panel.controlPanel.MultiplayerSetting();
@@ -102,7 +112,7 @@ public class GamePlay extends javax.swing.JPanel implements Direction {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel mainBody;
     private component.Panel.subPanel.Navigator navigator;
-    private static com.dama.gui.Table table;
-    private static javax.swing.JPanel tableContainer;
+    private com.dama.gui.game_panel.Table table;
+    private javax.swing.JPanel tableContainer;
     // End of variables declaration//GEN-END:variables
 }

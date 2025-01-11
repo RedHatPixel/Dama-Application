@@ -1,9 +1,10 @@
-package com.dama.gui;
+package com.dama.gui.game_panel;
 
 import com.dama.engine.dependencies.Position;
 import com.dama.engine.board.Board;
 import com.dama.engine.board.BoardUtils;
 import com.dama.engine.pieces.Piece;
+import com.dama.gui.GameInfo;
 import java.awt.BorderLayout;
 
 import java.awt.Color;
@@ -82,7 +83,7 @@ public final class BoardPanel extends JPanel {
                 rootPane.setGlassPane(dragGlassPane);
                 dragGlassPane.setVisible(true);
                 
-                if (GameInfo.GAME_DURATION != GameInfo.GameDuration.NULL)
+                if (GameInfo.getGameDuration() != GameInfo.GameDuration.NULL)
                     dragGlassPane.showGameStart(table);
             }
         });
@@ -106,7 +107,7 @@ public final class BoardPanel extends JPanel {
      * USED: for the system(TilePanel) only -> same package only
      * @return Table
      */
-    Table getTable() {
+    public Table getTable() {
         return this.table;
     }
     
@@ -115,7 +116,7 @@ public final class BoardPanel extends JPanel {
      * USED: for the system(TilePanel) only -> same package only
      * @return DragGlassPane
      */
-    DragGlassPane getDragGlassPane() {
+    public DragGlassPane getDragGlassPane() {
         return this.dragGlassPane;
     }
     
@@ -124,7 +125,7 @@ public final class BoardPanel extends JPanel {
      * USED: for the system(TilePanel) only -> same package only
      * @return Direction
      */
-    Direction getCurrentDirection() {
+    public Direction getCurrentDirection() {
         return this.direction;
     }
     
@@ -134,8 +135,8 @@ public final class BoardPanel extends JPanel {
      * @param dropPoint Point
      * @return TilePanel
      */
-    TilePanel getTilePanelAt(final Point dropPoint) {
-        Component component = tilesContainer.getComponentAt(dropPoint);
+    public TilePanel getTilePanelAt(final Point dropPoint) {
+        final Component component = tilesContainer.getComponentAt(dropPoint);
         if (component instanceof TilePanel)
             return (TilePanel) component;
         return null;
@@ -146,20 +147,31 @@ public final class BoardPanel extends JPanel {
      * USED: for the setting(Table) only -> same package only
      * @param direction Direction
      */
-    void setDirection(final Direction direction) {
+    public void setDirection(final Direction direction) {
         this.direction = direction;
         drawBoard(table.getGameBoard());
     }
     
     /**
      * Disable the board system
-     * USED: for the system(TilePanel) only -> same package only
+     * USED: for the parent(Table) only -> same package only
      */
-    void disableBoard() {
+    public void disableBoard() {
         for (final TilePanel tilePanel : boardTiles.values()) {
             tilePanel.disableTile();
         }
-        GameInfo.resetSetting();
+        validate();
+        repaint();
+    }
+    
+    /**
+     * Open the board system
+     * USED: for the parent(Table) only -> same package only
+     */
+    public void openBoard() {
+        for (final TilePanel tilePanel : boardTiles.values()) {
+            tilePanel.openTile();
+        }
         validate();
         repaint();
     }
@@ -167,9 +179,9 @@ public final class BoardPanel extends JPanel {
     /**
      * Display the new transition of board
      * USED: for the system(TilePanel) only -> same package only
-     * @param gameBoard Board
+     * @param board     Board
      */
-    void drawBoard(final Board board) {
+    public void drawBoard(final Board board) {
         tilesContainer.removeAll();
         for (final TilePanel tilePanel : direction.traverse(boardTiles).values()) {
             tilePanel.drawTile(board);
@@ -183,9 +195,9 @@ public final class BoardPanel extends JPanel {
      * Display the possible movement of the piece
      * USED: for the system(TilePanel) only -> same package only
      * @param piece Piece
-     * @param gameBoard Board
+     * @param board Board
      */
-    void drawGuidance(final Piece piece, final Board board) {
+    public void drawGuidance(final Piece piece, final Board board) {
         for (final TilePanel tilePanel : boardTiles.values()) {
             tilePanel.drawGuidance(piece, board);
         }
@@ -196,10 +208,9 @@ public final class BoardPanel extends JPanel {
     /**
      * Display the latest moves of the piece
      * USED: for the system(TilePanel) only -> same package only
-     * @param piece Piece
-     * @param gameBoard Board
+     * @param board Board
      */
-    void highlightLatestMove(final Board board) {
+    public void highlightLatestMove(final Board board) {
         for (final TilePanel tilePanel : boardTiles.values()) {
             tilePanel.drawHighlight(board);
         }
@@ -237,7 +248,7 @@ public final class BoardPanel extends JPanel {
     }
 
     // Enum State: The Direction of the board
-    static enum Direction {
+    public static enum Direction {
         NORMAL {
             @Override
             Map<Position, TilePanel> traverse(final Map<Position, TilePanel> boardTiles) {
@@ -245,13 +256,8 @@ public final class BoardPanel extends JPanel {
             }
             
             @Override
-            Direction opposite() {
+            public Direction opposite() {
                 return FLIPPED;
-            }
-
-            @Override
-            boolean reversed() {
-                return false;
             }
         },
         FLIPPED {
@@ -267,19 +273,13 @@ public final class BoardPanel extends JPanel {
             }
             
             @Override
-            Direction opposite() {
+            public Direction opposite() {
                 return NORMAL;
-            }
-
-            @Override
-            boolean reversed() {
-                return true;
             }
         };
         
         abstract Map<Position, TilePanel> traverse(final Map<Position, TilePanel> boardTiles);
-        abstract Direction opposite();
-        abstract boolean reversed();
+        public abstract Direction opposite();
     }
     
     // Override setBounds to enforce square size

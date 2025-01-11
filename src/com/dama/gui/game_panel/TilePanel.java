@@ -1,29 +1,19 @@
- package com.dama.gui;
+ package com.dama.gui.game_panel;
 
 import com.dama.engine.dependencies.Position;
 import com.dama.engine.dependencies.Move;
-import com.dama.engine.board.Board;
-import com.dama.engine.board.BoardUtils;
 import com.dama.engine.dependencies.Move.AttackMove;
 import com.dama.engine.dependencies.Move.MultipleAttackMove;
+import com.dama.engine.board.Board;
+import com.dama.engine.board.BoardUtils;
 import com.dama.engine.pieces.Piece;
+ 
+import com.dama.gui.*;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
-
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-
-final class TilePanel extends JPanel {
+public final class TilePanel extends JPanel {
     
     // Static Variables
     private static final Dimension PREFERRED_SIZE = new Dimension(62, 62);
@@ -35,13 +25,15 @@ final class TilePanel extends JPanel {
     private static final String DOT_IMAGE = "dot";
     
     // Define Variables
+    private final TilePanelSystem tilePanelSystem;
     private final BoardPanel boardPanel;
     private final Position coordinate;
     private final Table table;
-    private final TilePanelSystem tilePanelSystem;
     private final JLabel content;
     private Dimension lastSize;
     private String image;
+    
+    // Tile Conditions
     private boolean threaten;
     private boolean selected;
     private boolean assigned;
@@ -50,10 +42,10 @@ final class TilePanel extends JPanel {
     // Constructor: Define each tile panel to display in board
     TilePanel(final BoardPanel boardPanel, final Position coordinate) {
         super(new BorderLayout());
+        this.tilePanelSystem = new TilePanelSystem(this);
         this.boardPanel = boardPanel;
         this.coordinate = coordinate;
         this.table = boardPanel.getTable();
-        this.tilePanelSystem = new TilePanelSystem(this);
         this.content = new JLabel();
         this.image = new String();
         this.lastSize = getSize();
@@ -77,7 +69,7 @@ final class TilePanel extends JPanel {
         setDoubleBuffered(true);
         setRequestFocusEnabled(false);
         // WARNING: Remove Button Functionality -> Table == null
-        if (table != null || GameInfo.GAME_DURATION == GameInfo.GameDuration.NULL)  {
+        if (table != null || GameInfo.getGameDuration() == GameInfo.GameDuration.NULL)  {
             assignTilePieceIcon(boardPanel.getTable().getGameBoard());
             addMouseListener(tilePanelSystem);
             addComponentListener(new ComponentAdapter() {
@@ -121,6 +113,8 @@ final class TilePanel extends JPanel {
         initializeAndResizeTileIcon();
     }
     
+    //-------------BoardPanel_Help_Methods---------------//
+    
     /**
      * Show the after movement
      * USED: for the manager(BoardPanel) only -> same package only
@@ -150,7 +144,6 @@ final class TilePanel extends JPanel {
         initializeAndResizeTileIcon();
     }
     
-    
     /**
      * Disable the tile functionality
      * USED: for the manager(BoardPanel) only -> same package only
@@ -163,10 +156,28 @@ final class TilePanel extends JPanel {
     }
     
     /**
+     * Open the tile functionality
+     * USED: for the manager(BoardPanel) only -> same package only
+     */
+    void openTile() {
+        addMouseListener(tilePanelSystem);
+        addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseDragged(final MouseEvent e) {
+                boardPanel.getDragGlassPane().setPointLocation(
+                SwingUtilities.convertPoint(
+                        TilePanel.this, e.getPoint(), boardPanel.getDragGlassPane()));
+            }
+        });
+    }
+    
+    //-------------TilePanelSystem_Help_Methods---------------//
+    
+    /**
      * Set the proper background color of a tile
      * USED: for the TilePanelSystem only -> same package only
      */
-    void setBackgroundRespectiveColor() {
+    public void setBackgroundRespectiveColor() {
         final Color background = 
                 BoardUtils.TILES_PATTERN[this.coordinate.x()][this.coordinate.y()] ? TILE_BLACK : TILE_WHITE;
         setBackground(
@@ -176,12 +187,12 @@ final class TilePanel extends JPanel {
                 (selected || tilePanelSystem.pressed()) ? background.darker() :
                 tilePanelSystem.hover() ? background.brighter() : background);
     }
-
+    
     /**
      * Remove the tile piece icon
      * USED: for the TilePanelSystem only -> same package only
      */
-    void removeTilePieceIcon() {
+    public void removeTilePieceIcon() {
         image = "";
         initializeAndResizeTileIcon();
     }
@@ -191,7 +202,7 @@ final class TilePanel extends JPanel {
      * USED: for the TilePanelSystem only -> same package only
      * @return Position
      */
-    Position getCoordinate() {
+    public Position getCoordinate() {
         return this.coordinate;
     }
     
@@ -200,7 +211,7 @@ final class TilePanel extends JPanel {
      * USED: for the TilePanelSystem only -> same package only
      * @return BoardPanel
      */
-    BoardPanel getBoardPanel() {
+    public BoardPanel getBoardPanel() {
         return this.boardPanel;
     }
     
@@ -209,9 +220,11 @@ final class TilePanel extends JPanel {
      * USED: for the TilePanelSystem only -> same package only
      * @return ImageIcon
      */
-    ImageIcon getPieceIcon() {
+    public ImageIcon getPieceIcon() {
         return (ImageIcon) this.content.getIcon();
     }
+    
+    //-------------TilePanel_Conditional_Methods---------------//
     
     // Configuration: Highlight the tiles background if the piece was selected
     private void highlightTilePiece(final Piece piece, final Board board) {
@@ -224,7 +237,7 @@ final class TilePanel extends JPanel {
     
     // Configuration: Highlight the tiles background if the piece can be move
     private void highlightMovablePiece(final Board board) {
-        if (!GameInfo.CAN_SHOW_MOVABLE_PIECE) return;
+        if (!GameInfo.showMovablePiece()) return;
         for (final Move move : board.getCurrentPlayer().getLegalMoves()) {
             if (move.getMovedPiece().getPosition().equals(coordinate) &&
                 board.getTile(coordinate).isOccupied()) {
@@ -236,7 +249,7 @@ final class TilePanel extends JPanel {
     
     // Configuration: Highlight the tiles background if the piece was the latest move
     private void highlightTileFinalMove(final Board board) {
-        if (board.getLatestMove() == null || !GameInfo.CAN_SHOW_LATEST_MOVE) return;
+        if (board.getLatestMove() == null || !GameInfo.showLatestMove()) return;
         if (board.getLatestMove().getCurrentCoordinate().equals(coordinate) ||
             board.getLatestMove().getLandingCoordinate().equals(coordinate))
             assigned = true;
@@ -244,7 +257,7 @@ final class TilePanel extends JPanel {
     
     // Configuration: Highlight the tiles background if the piece in it can be capture
     private void highlightTileBackgroundCaptures(final Piece piece, final Board board) {
-        if (piece == null || !GameInfo.CAN_SHOW_CAPTURES) return;
+        if (piece == null || !GameInfo.showCaptures()) return;
         else if (piece.getAlliance() != board.getCurrentPlayer().getAlliance()) return;
         for (final Move move : piece.calculateLegalMoves(board)) {
             if (move.getType().canAttack()) {
@@ -275,7 +288,7 @@ final class TilePanel extends JPanel {
     
     // Configuration: Highlight the tiles if it can be move
     private void assignTileSelectionIcon(final Piece piece, final Board board) {
-        if (piece == null || !GameInfo.CAN_SHOW_VALID_MOVES) return;
+        if (piece == null || !GameInfo.showValidMoves()) return;
         else if (board.getTile(coordinate).isOccupied()) return;
         else if (piece.getAlliance() != board.getCurrentPlayer().getAlliance()) return;
         image = "";

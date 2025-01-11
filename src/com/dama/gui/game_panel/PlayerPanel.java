@@ -1,7 +1,8 @@
-package com.dama.gui;
+package com.dama.gui.game_panel;
 
 import com.dama.engine.players.Player;
 import com.dama.gui.GameInfo.GameDuration;
+import com.dama.gui.TableManager;
 import java.awt.BorderLayout;
 import utilities.FontManager;
 import utilities.FontManager.*;
@@ -25,18 +26,20 @@ public final class PlayerPanel extends JPanel {
     private final Table table;
     private final Timer timer;
     private long remainingTime;
+    private int moveBackCount;
     private boolean isPaused;
     
     // Define Components
     private JLabel nameLabel;
     private JLabel timerLabel;
     
-    public PlayerPanel(final Table table, final Player player, final String name) {
+    PlayerPanel(final Table table, final Player player, final String name) {
         this.table = table;
         this.name = name;
         this.player = player;
         this.timer = new Timer();
         this.remainingTime = 0;
+        this.moveBackCount = 3;
         initComponents();
     }
     
@@ -99,6 +102,21 @@ public final class PlayerPanel extends JPanel {
     String getPlayerName() {
         return this.name;
     }
+    
+    /**
+     * Get the available back move of the player
+     * @return Integer
+     */
+    public int getAvailableBackMove() {
+        return this.moveBackCount;
+    }
+    
+    /**
+     * Subtract the available back move of the player
+     */
+    public void subsAvailableBackMove() {
+        this.moveBackCount--;
+    }
 
     private String getTimerToString() {
         final long minutes = (remainingTime / 1000) / 60;
@@ -106,7 +124,7 @@ public final class PlayerPanel extends JPanel {
         return String.format("%02d:%02d", minutes, seconds);
     }
     
-    void startTimer(GameDuration gameDuration) {
+    void startTimer(final GameDuration gameDuration) {
         this.remainingTime = gameDuration.getTime();
         timerLabel.setText(getTimerToString());
         
@@ -115,14 +133,16 @@ public final class PlayerPanel extends JPanel {
         this.timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                if (table.getGameBoard().getCurrentPlayer().getAlliance().equals(player.getAlliance())) {
-                    resumeTimer();
-                    timerLabel.setBackground(new Color(182, 181, 169));
+                
+                if (table.isOnGame() && !table.gameEnded()) {
+                    if (table.getGameBoard().getCurrentPlayer().getAlliance().equals(player.getAlliance())) {
+                        resumeTimer();
+                        timerLabel.setBackground(new Color(182, 181, 169));
+                    } else {
+                        timerLabel.setBackground(new Color(152, 151, 149));
+                        pauseTimer();
+                    }
                 }
-                else  {
-                    timerLabel.setBackground(new Color(152, 151, 149));
-                    pauseTimer();
-                } 
                 
                 if (!isPaused && remainingTime > 0) {
                     remainingTime -= 1000;
@@ -130,7 +150,7 @@ public final class PlayerPanel extends JPanel {
                 }
                 else if (remainingTime <= 0) {
                     timerLabel.setText(getTimerToString());
-                    stopGameAndLose();
+                    TableManager.setWinner(table, true);
                     timer.cancel();
                 }
             }
@@ -138,25 +158,15 @@ public final class PlayerPanel extends JPanel {
         pauseTimer();
     }
     
-    void stopGameAndLose() {
-        if (table.getGameBoard().getCurrentPlayer().getOpponent().getAlliance().isWhite())
-            table.status = Table.Status.WHITE_PLAYER_WIN;
-        else
-            table.status = Table.Status.BLACK_PLAYER_WIN;
-        table.getBoardPanel().disableBoard();
-        table.getBoardPanel().drawBoard(table.getGameBoard());
-        table.getBoardPanel().getDragGlassPane().showGameEnd(table.status, table);
-    }
-    
-    void stopTimer() {
+    public void stopTimer() {
         this.timer.cancel();
     }
     
-    void pauseTimer() {
+    public void pauseTimer() {
         this.isPaused = true;
     }
 
-    void resumeTimer() {
+    public void resumeTimer() {
         this.isPaused = false;
     }
 }

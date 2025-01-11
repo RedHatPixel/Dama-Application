@@ -1,26 +1,32 @@
 package component.Panel;
 
+import component.Panel.CardHandlers.CardLayoutManager;
+import component.Panel.CardHandlers.CardPanelRegistry;
+import main.MainFrame;
 import utilities.CommonConstants;
-import utilities.Directory;
 
-public class Tutorial extends javax.swing.JPanel implements Direction {
+public class Tutorial extends CardPanelRegistry {
 
     public Tutorial() {
         initComponents();
-        
         setFont(CommonConstants.DEFAULT_FONT);
         setMaximumSize(CommonConstants.MAX_SIZE);
         setMinimumSize(CommonConstants.MIN_SIZE);
         setPreferredSize(CommonConstants.PREFFERED_SIZE);
-        setDirectName();
-        
-        this.revalidate();
-        this.repaint();
+        initialize();
+        validate();
+        repaint();
+    }
+    
+    @Override
+    protected void configurePanel() {
+        if (!CardLayoutManager.DESIGN_TIME)
+            CardLayoutManager.getInstance(MainFrame.class).registerPanel(this, getName());
     }
 
     @Override
-    public void setDirectName() {
-        this.setName(Directory.Panel.TUTORIAL.getName());
+    public String getPanelName() {
+        return "Tutorial";
     }
     
     @SuppressWarnings("unchecked")

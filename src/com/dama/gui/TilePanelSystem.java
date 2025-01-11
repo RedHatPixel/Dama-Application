@@ -1,21 +1,17 @@
 package com.dama.gui;
 
-import com.dama.engine.board.Board;
-import com.dama.engine.dependencies.Move;
-import com.dama.engine.dependencies.MoveTransition;
-import com.dama.engine.dependencies.Position;
-
-import java.awt.Point;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-
-import javax.swing.ImageIcon;
-import javax.swing.SwingUtilities;
-import javax.swing.Timer;
 import static javax.swing.SwingUtilities.isLeftMouseButton;
 import static javax.swing.SwingUtilities.isRightMouseButton;
+import com.dama.engine.board.Board;
+import com.dama.gui.game_panel.*;
+import com.dama.engine.dependencies.*;
+import com.dama.sound.SoundManager;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
 
-final class TilePanelSystem implements MouseListener {
+
+public final class TilePanelSystem implements MouseListener {
 
     private final TilePanel tilePanel;
     
@@ -28,8 +24,8 @@ final class TilePanelSystem implements MouseListener {
     private Timer dragTimer;
     
     
-    // Constructor
-    TilePanelSystem(final TilePanel tilePanel) {
+    // Constructor:
+    public TilePanelSystem(final TilePanel tilePanel) {
         this.tilePanel = tilePanel;
         this.pressed = false;
         this.dragTimer = null;
@@ -74,33 +70,33 @@ final class TilePanelSystem implements MouseListener {
             getGameBoard().getCurrentPlayer().getAlliance())
             return;
             
-        getTable().sourceTile = getGameBoard().getTile(getCoordinate()); // Set Source tile
-        getTable().selectedPiece = getTable().sourceTile.getPiece(); // Set Selected Piece
+        getTable().setSourceTile(getGameBoard().getTile(getCoordinate())); // Set Source tile
+        getTable().setSelectedPiece(getTable().getSourceTile().getPiece()); // Set Selected Piece
 
         // Check if Tile is not Occupied -> Piece == null
-        if (!getTable().sourceTile.isOccupied()) {
-            getTable().sourceTile = null;
+        if (!getTable().getSourceTile().isOccupied()) {
+            getTable().setSourceTile(null);
         }
         else {
             SwingUtilities.invokeLater(() -> {
                 getBoardPanel().drawBoard(getGameBoard());
-                getBoardPanel().drawGuidance(getTable().selectedPiece, getGameBoard());
+                getBoardPanel().drawGuidance(getTable().getSelectedPiece(), getGameBoard());
             });
         }
     }
     
     // Configurations: Select the landing point of the player move
     private void setDestinationPoint() {
-        if (getTable().destinationTile == null)
-            getTable().destinationTile = getGameBoard().getTile(getCoordinate());
+        if (getTable().getDestinationTile() == null)
+            getTable().setDestinationTile(getGameBoard().getTile(getCoordinate()));
         
         // Check if Destination tile is Occupied, Re Select that Piece
-        if (getTable().destinationTile.isOccupied()) {
-            getTable().sourceTile = getTable().destinationTile;
-            getTable().selectedPiece = getTable().destinationTile.getPiece();
-            getTable().destinationTile = null;
+        if (getTable().getDestinationTile().isOccupied()) {
+            getTable().setSourceTile(getTable().getDestinationTile());
+            getTable().setSelectedPiece(getTable().getDestinationTile().getPiece());
+            getTable().setDestinationTile(null);
             SwingUtilities.invokeLater(() -> {
-                getBoardPanel().drawGuidance(getTable().selectedPiece, getGameBoard());
+                getBoardPanel().drawGuidance(getTable().getSelectedPiece(), getGameBoard());
             });
         }
     }
@@ -109,23 +105,23 @@ final class TilePanelSystem implements MouseListener {
     private void createMove() {
         final Move move = Move.MoveFactory.createMove(
                 getGameBoard(), 
-                getTable().sourceTile.getCoordinate(), 
-                getTable().destinationTile.getCoordinate());
+                getTable().getSourceTile().getCoordinate(), 
+                getTable().getDestinationTile().getCoordinate());
         final MoveTransition transition = getGameBoard().getCurrentPlayer().makeMove(move);
         
         // Check if the move was valid
         if (transition.getMoveStatus().isDone()) {
-            getTable().setGameBoard(transition.getTransitionBoard());
+            TableManager.setNewBoard(getTable(), transition.getTransitionBoard());
+            SoundManager.createRandomPieceSound();
             validateMove();
             
             // Re-select the new possible moves
             if (getGameBoard().getLatestMove().getType().canAttackAgain()) {
-                getTable().sourceTile = getGameBoard().getTile(getCoordinate());
-                getTable().selectedPiece = getTable().sourceTile.getPiece();
-                getTable().destinationTile = null;
+                getTable().setSourceTile(getGameBoard().getTile(getCoordinate()));
+                getTable().setSelectedPiece(getTable().getSourceTile().getPiece());
+                getTable().setDestinationTile(null);
                 SwingUtilities.invokeLater(() -> {
-                    getBoardPanel().drawGuidance(getTable().selectedPiece, getGameBoard());
-                    getBoardPanel().highlightLatestMove(getGameBoard());
+                    getBoardPanel().drawGuidance(getTable().getSelectedPiece(), getGameBoard());
                 });
                 return;
             }
@@ -140,37 +136,27 @@ final class TilePanelSystem implements MouseListener {
         
         // Check if current player has no pieces or if current player has no moves
         if (getGameBoard().getCurrentPlayer().isLooser() || getGameBoard().getCurrentPlayer().isStalemate()) {
-            if (getTable().getGameBoard().getCurrentPlayer().getOpponent().getAlliance().isWhite()) {
-                getTable().status = Table.Status.WHITE_PLAYER_WIN;
-            }
-            else {
-                getTable().status = Table.Status.BLACK_PLAYER_WIN;
-            }
             
-            getTable().stopPlayerTimer();
-            getBoardPanel().disableBoard();
-            getDragGlassPane().showGameEnd(getTable().status, getTable());
+            TableManager.setWinner(getTable(), true);
         }
         // Check if game was not progressing
         else if (getGameBoard().calculate50LatestMove(getTable().getGamePlay()).isEmpty()) {
-            getTable().status = Table.Status.STALEMATE;
             
-            getTable().stopPlayerTimer();
-            getBoardPanel().disableBoard();
-            getDragGlassPane().showGameEnd(getTable().status, getTable());
+            TableManager.setStalemate(getTable());
         }
         // Flip board game play
-        else if (GameInfo.CAN_CHANGE_TURN) {
+        else if (GameInfo.canChangeTurn()) {
+            
             getBoardPanel().setDirection(getBoardPanel().getCurrentDirection().opposite());
-            getTable().reversePlayer();
+            TableManager.reversePlayerPanel(getTable());
         }
     }
     
     // Reset All the selected move of the player
     private void resetSelections() {
-        getTable().sourceTile = null;
-        getTable().selectedPiece = null;
-        getTable().destinationTile = null;
+        getTable().setSourceTile(null);
+        getTable().setDestinationTile(null);
+        getTable().setSelectedPiece(null);
         SwingUtilities.invokeLater(() -> {
             getBoardPanel().drawBoard(getGameBoard());
             getBoardPanel().highlightLatestMove(getGameBoard());
@@ -196,7 +182,7 @@ final class TilePanelSystem implements MouseListener {
                 dragTimer = new Timer(DRAG_DELAY, (_event) -> {
                     
                    // Create a Dragging Piece illusion
-                    if (getTable().sourceTile != null && getTable().sourceTile.getCoordinate().equals(getCoordinate())) {
+                    if (getTable().getSourceTile() != null && getTable().getSourceTile().getCoordinate().equals(getCoordinate())) {
                         getDragGlassPane().setDragging(true);
                         getDragGlassPane().setDraggedIcon((ImageIcon) tilePanel.getPieceIcon());
                         getDragGlassPane().setPointLocation(
@@ -211,7 +197,7 @@ final class TilePanelSystem implements MouseListener {
                 setStartingPoint();
             }
             // Click Function: Create a destination point
-            else if (getTable().sourceTile != null) {
+            else if (getTable().getSourceTile() != null) {
                 setDestinationPoint();
             }
         }
@@ -228,13 +214,13 @@ final class TilePanelSystem implements MouseListener {
                 dragTimer.stop();
 
             // Click Function: Create a move after selecting everything
-            if (getTable().sourceTile != null && getTable().destinationTile != null) {
+            if (getTable().getSourceTile() != null && getTable().getDestinationTile() != null) {
                 
                 // Get the mouse target
                 final Point point = SwingUtilities.convertPoint(tilePanel, e.getPoint(), getBoardPanel());
                 final TilePanel targetTile = getBoardPanel().getTilePanelAt(point);
                 
-                if (targetTile == null || !targetTile.getCoordinate().equals(getTable().destinationTile.getCoordinate())) {
+                if (targetTile == null || !targetTile.getCoordinate().equals(getTable().getDestinationTile().getCoordinate())) {
                     resetSelections();
                     return;
                 }
@@ -252,23 +238,20 @@ final class TilePanelSystem implements MouseListener {
                 final TilePanel targetTile = getBoardPanel().getTilePanelAt(point);
 
                 // Determine the dropping tile coordinate
-                if (targetTile != null && getTable().sourceTile != null) {
+                if (targetTile != null && getTable().getSourceTile() != null) {
                     
                     // Click Function: Identify a clicking method
-                    if (targetTile.getCoordinate().equals(getTable().sourceTile.getCoordinate())) {
+                    if (targetTile.getCoordinate().equals(getTable().getSourceTile().getCoordinate())) {
                         SwingUtilities.invokeLater(() -> {
                             getBoardPanel().drawBoard(getGameBoard());
                         });
                         setStartingPoint();
-                        SwingUtilities.invokeLater(() -> {
-                            getBoardPanel().highlightLatestMove(getGameBoard());
-                        });
                         return;
                     }
                     
                     // Dropping Piece: Initiate a drop movement
-                    getTable().destinationTile = getTable().getGameBoard().getTile(targetTile.getCoordinate());
-                    if (getTable().destinationTile != null)
+                    getTable().setDestinationTile(getTable().getGameBoard().getTile(targetTile.getCoordinate()));
+                    if (getTable().getDestinationTile() != null)
                         createMove();
                 }
                 else {

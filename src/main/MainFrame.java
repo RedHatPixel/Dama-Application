@@ -1,31 +1,32 @@
 package main;
 
+import component.OptionPane.QuitConfirmation;
+import component.Panel.CardHandlers.FrameCardManager;
 import utilities.CommonConstants;
 import utilities.Configurations;
-import utilities.Directory;
-import java.awt.CardLayout;
 
-public class MainFrame extends javax.swing.JFrame {
+public class MainFrame extends FrameCardManager {
 
-    private String ImageDirectory = "src/resources/images/selection_icon/DamaLogo.png";
-    
     public MainFrame() {
         initComponents();
-        
-        setIconImage(Configurations.loadImage(ImageDirectory));
+        setIconImage(Configurations.loadImage(CommonConstants.IMAGE_DIRECTORY));
         setFont(CommonConstants.DEFAULT_FONT);
-        
         setMaximumSize(CommonConstants.MAX_SIZE);
         setMinimumSize(CommonConstants.MIN_SIZE);
         setPreferredSize(CommonConstants.PREFFERED_SIZE);
         setSize(CommonConstants.PREFFERED_SIZE);
         setResizable(true);
-        
-        this.setVisible(true);
-        this.revalidate();
-        this.repaint();
-        
-        this.setName(Directory.ParentName.MAIN_FRAME.getName());
+        setVisible(true);
+        validate();
+        repaint();
+    }
+    
+    public void closeWindow() {
+        final int status = new QuitConfirmation(this, true).getReturnStatus();
+        if (status == component.OptionPane.QuitConfirmation.RET_YES) {
+            this.dispose();
+            System.exit(0);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -49,9 +50,10 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().setLayout(new java.awt.CardLayout());
-        getContentPane().add(mainMenu, "MainMenu");
+        getContentPane().add(mainMenu, "Main Menu");
         getContentPane().add(tutorial, "Tutorial");
         getContentPane().add(gamePlay, "Game Play");
+        gamePlay.getAccessibleContext().setAccessibleName("Game Play");
 
         getAccessibleContext().setAccessibleName("MainFrame");
 
@@ -60,19 +62,8 @@ public class MainFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        
-        int status = new component.OptionPane.QuitConfirmation(this, true).getReturnStatus();
-        
-        if (status == component.OptionPane.QuitConfirmation.RET_YES) {
-            this.dispose();
-            System.exit(0);
-        }
+        closeWindow();
     }//GEN-LAST:event_formWindowClosing
-
-    public void setDirectory(final Directory.Panel panel) {
-        CardLayout layout = (CardLayout) getContentPane().getLayout();
-        layout.show(getContentPane(), panel.getName());
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables

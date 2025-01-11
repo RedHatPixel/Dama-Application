@@ -6,6 +6,8 @@ import java.awt.Font;
 
 public final class CommonConstants {
     
+    public static final String IMAGE_DIRECTORY = "src/resources/images/selection_icon/DamaLogo.png";
+    
     // JFrame Configuration
     public static final Font DEFAULT_FONT = FontManager.getFont(
             FontManager.FontName.POPPINS_MEDIUM, FontManager.FontType.POPPINS, 12);

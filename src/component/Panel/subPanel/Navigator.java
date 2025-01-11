@@ -1,12 +1,15 @@
 package component.Panel.subPanel;
 
-import javax.swing.ImageIcon;
+import main.MainFrame;
+import component.Panel.CardHandlers.*;
+import component.Panel.*;
 import utilities.CommonConstants;
 import utilities.Directory;
 import utilities.FontManager;
 import utilities.FontManager.*;
 import utilities.Configurations;
-import main.MainFrame;
+import javax.swing.ImageIcon;
+
 
 public class Navigator extends javax.swing.JPanel {
     
@@ -188,38 +191,23 @@ public class Navigator extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void titleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_titleActionPerformed
-        
-        final MainFrame main = (MainFrame) Directory.getParent(Directory.ParentName.MAIN_FRAME);
-        
-        if (main != null)
-            main.setDirectory(Directory.Panel.MAIN_MENU);
+        final FrameCardManager mainManager = CardLayoutManager.getInstance(MainFrame.class);
+        mainManager.showPanel(CardPanelRegistry.getInstance(MainMenu.class));
     }//GEN-LAST:event_titleActionPerformed
 
     private void learnButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_learnButtonActionPerformed
-        
-        final MainFrame main = (MainFrame) Directory.getParent(Directory.ParentName.MAIN_FRAME);
-        
-        if (main != null)
-            main.setDirectory(Directory.Panel.TUTORIAL);
+        final FrameCardManager mainManager = CardLayoutManager.getInstance(MainFrame.class);
+        mainManager.showPanel(CardPanelRegistry.getInstance(Tutorial.class));
     }//GEN-LAST:event_learnButtonActionPerformed
 
     private void quitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quitButtonActionPerformed
-        
-        final MainFrame main = (MainFrame) Directory.getParent(Directory.ParentName.MAIN_FRAME);
-        final int status = new component.OptionPane.QuitConfirmation(main, true).getReturnStatus();
-        
-        if (status == component.OptionPane.QuitConfirmation.RET_YES) {
-            main.dispose();
-            System.exit(0);
-        }
+        final MainFrame mainManager = CardLayoutManager.getInstance(MainFrame.class);
+        mainManager.closeWindow();
     }//GEN-LAST:event_quitButtonActionPerformed
 
     private void playButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playButtonActionPerformed
-        
-        final MainFrame main = (MainFrame) Directory.getParent(Directory.ParentName.MAIN_FRAME);
-        
-        if (main != null)
-            main.setDirectory(Directory.Panel.GAME_PLAY);
+        final FrameCardManager mainManager = CardLayoutManager.getInstance(MainFrame.class);
+        mainManager.showPanel(CardPanelRegistry.getInstance(GamePlay.class));
     }//GEN-LAST:event_playButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

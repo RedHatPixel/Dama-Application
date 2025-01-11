@@ -1,34 +1,26 @@
-package com.dama.gui;
+package com.dama.gui.game_panel;
 
-import com.dama.gui.Table.Status;
-import java.awt.AlphaComposite;
+import com.dama.gui.game_panel.Table.Status;
 import utilities.FontManager;
 import utilities.FontManager.*;
-import java.util.Timer;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.util.TimerTask;
-
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
 
 // Inner Class: DragGlassPane for overlaying dragged icons
-final class DragGlassPane extends JPanel {
+public final class DragGlassPane extends JPanel {
     
     // Define Variables
     private final BoardPanel boardPanel;
     private final FadeLabel title;
+    
+    private Timer fadeInTimer;
+    private Timer fadeOutTimer;
+    
     private Point mouseLocation;
     private ImageIcon draggedIcon;
     private boolean isDragging;
-    
-    
 
     // Construction: Define the container of dragged icon
     DragGlassPane(final BoardPanel boardPanel) {
@@ -53,8 +45,9 @@ final class DragGlassPane extends JPanel {
     /**
      * Show the start message of the game
      * USED: for the system(TilePanel) only -> same package only
+     * @param table     Table
      */
-    void showGameStart(final Table table) {
+    public void showGameStart(final Table table) {
         removeAnimation();
         final String playerOneName = table.getTopPlayerPanel().getPlayerName();
         final String playerTwoName = table.getBottomPlayerPanel().getPlayerName();
@@ -64,43 +57,53 @@ final class DragGlassPane extends JPanel {
         title.setText(message);
         setBoardLocation();
         
-        // Create a timer to show the message after a delay
-        new Timer().schedule(new TimerTask() {
+        if (fadeInTimer != null && fadeInTimer.isRunning()) {
+            fadeInTimer.stop();
+        }
+        if (fadeOutTimer != null && fadeOutTimer.isRunning()) {
+            fadeOutTimer.stop();
+        }
+        
+        // Fade-in effect
+        fadeInTimer = new javax.swing.Timer(30, null);
+        fadeInTimer.addActionListener(new ActionListener() {
             private float alpha = 0f;
             @Override
-            public void run() {
-                SwingUtilities.invokeLater(() -> {
-                    alpha += 0.05f;
-                    title.setAlpha(alpha);
-                    if (alpha >= 1f) {
-                        this.cancel();
-                    }
-                });
+            public void actionPerformed(ActionEvent e) {
+                alpha += 0.05f;
+                title.setAlpha(alpha);
+                if (alpha >= 1f) {
+                    fadeInTimer.stop();
+                }
             }
-        }, 0, 30);
-        
-        // Create a timer to show the message after a delay
-        new Timer().schedule(new TimerTask() {
+        });
+        fadeInTimer.start();
+
+        // Fade-out effect
+        fadeOutTimer = new javax.swing.Timer(30, null);
+        fadeOutTimer.addActionListener(new ActionListener() {
             private float alpha = 1f;
             @Override
-            public void run() {
-                SwingUtilities.invokeLater(() -> {
-                    alpha -= 0.05f;
-                    title.setAlpha(alpha);
-                    if (alpha <= 0f) {
-                        title.setText("");
-                        this.cancel();
-                    }
-                });
+            public void actionPerformed(ActionEvent e) {
+                alpha -= 0.05f;
+                title.setAlpha(alpha);
+                if (alpha <= 0f) {
+                    title.setText("");
+                    fadeOutTimer.stop();
+                }
             }
-        }, 2000, 30);
+        });
+        fadeOutTimer.setInitialDelay(2000);
+        fadeOutTimer.start();
     }
     
     /**
      * Show the ending message of the game
      * USED: for the system(TilePanel) only -> same package only
+     * @param status    Status
+     * @param table     Table
      */
-    void showGameEnd(final Status status, final Table table) {
+    public void showGameEnd(final Status status, final Table table) {
         removeAnimation();
         final PlayerPanel winner = status.getWinner(
                 table.getTopPlayerPanel(), table.getBottomPlayerPanel());
@@ -108,27 +111,34 @@ final class DragGlassPane extends JPanel {
         title.setText(message);
         setBoardLocation();
         
-        // Create a timer to show the message after a delay
-        new Timer().schedule(new TimerTask() {
+        if (fadeInTimer != null && fadeInTimer.isRunning()) {
+            fadeInTimer.stop();
+        }
+        if (fadeOutTimer != null && fadeOutTimer.isRunning()) {
+            fadeOutTimer.stop();
+        }
+
+        // Fade-in effect
+        fadeInTimer = new javax.swing.Timer(30, null);
+        fadeInTimer.addActionListener(new ActionListener() {
             private float alpha = 0f;
             @Override
-            public void run() {
-                SwingUtilities.invokeLater(() -> {
-                    alpha += 0.05f;
-                    title.setAlpha(alpha);
-                    if (alpha >= 1f) {
-                        this.cancel();
-                    }
-                });
+            public void actionPerformed(ActionEvent e) {
+                alpha += 0.05f;
+                title.setAlpha(alpha);
+                if (alpha >= 1f) {
+                    fadeInTimer.stop();
+                }
             }
-        }, 0, 30);
+        });
+        fadeInTimer.start();
     }
     
     /**
      * To remove any animation or background from the board
      * USED: for the controls(BoardPanel) only -> same package only
      */
-    void removeAnimation() {
+    public void removeAnimation() {
         removeAll();
         revalidate();
         repaint();
@@ -139,7 +149,7 @@ final class DragGlassPane extends JPanel {
      * USED: for the system(TilePanel) only -> same package only
      * @param location Point
      */
-    void setPointLocation(final Point location) {
+    public void setPointLocation(final Point location) {
         mouseLocation = location;
         revalidate();
         repaint();
@@ -148,9 +158,8 @@ final class DragGlassPane extends JPanel {
     /**
      * Set the new location of the board
      * USED: for the system(TilePanel) only -> same package only
-     * @param bounds Rectangle
      */
-    void setBoardLocation() {
+    public void setBoardLocation() {
         if (!title.getText().isBlank()) {
             removeAll();
             
@@ -183,7 +192,7 @@ final class DragGlassPane extends JPanel {
      * USED: for the system(TilePanel) only -> same package only
      * @param icon ImageIcon
      */
-    void setDraggedIcon(final ImageIcon icon) {
+    public void setDraggedIcon(final ImageIcon icon) {
         draggedIcon = icon;
     }
     
@@ -192,7 +201,7 @@ final class DragGlassPane extends JPanel {
      * USED: for the system(TilePanel) only -> same package only
      * @param isDragged Boolean
      */
-    void setDragging(final boolean isDragged) {
+    public void setDragging(final boolean isDragged) {
         isDragging = isDragged;
     }
     
@@ -201,7 +210,7 @@ final class DragGlassPane extends JPanel {
      * USED: for the system(TilePanel) only -> same package only
      * @return Boolean
      */
-    boolean isDragging() {
+    public boolean isDragging() {
         return isDragging;
     }
     
