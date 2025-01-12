@@ -3,7 +3,7 @@ package component.Panel.controlPanel;
 import com.dama.gui.GameInfo;
 import com.dama.gui.TableManager;
 import com.dama.gui.game_panel.Table;
-import component.OptionPane.QuitGameConfirmation;
+import component.OptionPane.QuitConfirmation;
 import component.Panel.CardHandlers.*;
 import component.Panel.GamePlay;
 import utilities.FontManager;
@@ -17,6 +17,10 @@ public class PlayerSetting extends CardPanelRegistry {
 
         for (Component comp : getComponents()) {
             comp.setFont(FontManager.getFont(FontName.POPPINS_SEMIBOLD, FontType.POPPINS, comp.getFont().getSize()));
+        }
+        
+        for (Component comp : playerWins.getComponents()) {
+            comp.setFont(FontManager.getFont(FontName.POPPINS_BOLD, FontType.POPPINS, comp.getFont().getSize()));
         }
         
         initialize();
@@ -37,13 +41,17 @@ public class PlayerSetting extends CardPanelRegistry {
     
     public void setGameInformation() {
         title.setText(GameInfo.getBotttomPlayerName() + " vs " + GameInfo.getTopPlayerName());
+        playerOneName.setText(GameInfo.getBotttomPlayerName());
+        playerTwoName.setText(GameInfo.getTopPlayerName());
     }
     
     public void endGame() {
-        final int status = new QuitGameConfirmation(null, true).getReturnStatus();
-        if (status == QuitGameConfirmation.RET_YES) {
+        final int status = new QuitConfirmation(
+                "Are you sure you want quit the game?",
+                "Quit Game", null).getReturnStatus();
+        if (status == QuitConfirmation.RET_YES) {
             GameInfo.resetSetting();
-        
+            
             if (CardPanelRegistry.isInstanced(GamePlay.class)) {
                 CardPanelRegistry.getInstance(GamePlay.class).setNewTable();
 
@@ -70,7 +78,11 @@ public class PlayerSetting extends CardPanelRegistry {
         component.Button.MainButton forwardButton = new component.Button.MainButton();
         component.Button.MainButton surrenderButton = new component.Button.MainButton();
         component.Button.MainButton quitButton = new component.Button.MainButton();
-        javax.swing.JPanel playerWins = new javax.swing.JPanel();
+        playerWins = new javax.swing.JPanel();
+        playerOneName = new javax.swing.JLabel();
+        playerTwoName = new javax.swing.JLabel();
+        playerOneScore = new javax.swing.JLabel();
+        playerTwoScore = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(38, 37, 34));
         setBorder(javax.swing.BorderFactory.createMatteBorder(0, 5, 5, 0, new java.awt.Color(29, 28, 26)));
@@ -213,6 +225,64 @@ public class PlayerSetting extends CardPanelRegistry {
         playerWins.setOpaque(false);
         playerWins.setPreferredSize(new java.awt.Dimension(100, 0));
         playerWins.setRequestFocusEnabled(false);
+        playerWins.setLayout(new java.awt.GridBagLayout());
+
+        playerOneName.setFont(new java.awt.Font("Segoe UI Black", 0, 14)); // NOI18N
+        playerOneName.setForeground(new java.awt.Color(255, 255, 255));
+        playerOneName.setText("Player");
+        playerOneName.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 10);
+        playerWins.add(playerOneName, gridBagConstraints);
+
+        playerTwoName.setFont(new java.awt.Font("Segoe UI Black", 0, 14)); // NOI18N
+        playerTwoName.setForeground(new java.awt.Color(255, 255, 255));
+        playerTwoName.setText("Opponent");
+        playerTwoName.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 10);
+        playerWins.add(playerTwoName, gridBagConstraints);
+
+        playerOneScore.setBackground(new java.awt.Color(51, 51, 51));
+        playerOneScore.setFont(new java.awt.Font("Segoe UI Black", 0, 14)); // NOI18N
+        playerOneScore.setForeground(new java.awt.Color(255, 255, 255));
+        playerOneScore.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        playerOneScore.setText("0");
+        playerOneScore.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        playerOneScore.setOpaque(true);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.ipady = 10;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 10, 5, 30);
+        playerWins.add(playerOneScore, gridBagConstraints);
+
+        playerTwoScore.setBackground(new java.awt.Color(51, 51, 51));
+        playerTwoScore.setFont(new java.awt.Font("Segoe UI Black", 0, 14)); // NOI18N
+        playerTwoScore.setForeground(new java.awt.Color(255, 255, 255));
+        playerTwoScore.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        playerTwoScore.setText("0");
+        playerTwoScore.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        playerTwoScore.setOpaque(true);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.ipady = 10;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 10, 5, 30);
+        playerWins.add(playerTwoScore, gridBagConstraints);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
@@ -225,8 +295,14 @@ public class PlayerSetting extends CardPanelRegistry {
 
     private void restartButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_restartButtonActionPerformed
         // Restart the game
-        if (CardPanelRegistry.isInstanced(GamePlay.class)) {
-            CardPanelRegistry.getInstance(GamePlay.class).setNewTable();
+        final int status = new QuitConfirmation(
+                "Create new game?",
+                "Restart Confirmation", null).getReturnStatus();
+        
+        if (status == QuitConfirmation.RET_YES) {
+            if (CardPanelRegistry.isInstanced(GamePlay.class)) {
+                CardPanelRegistry.getInstance(GamePlay.class).setNewTable();
+            }
         }
     }//GEN-LAST:event_restartButtonActionPerformed
 
@@ -250,7 +326,16 @@ public class PlayerSetting extends CardPanelRegistry {
         // End the game with current player giving up
         if (CardPanelRegistry.isInstanced(GamePlay.class)) {
             final Table table = CardPanelRegistry.getInstance(GamePlay.class).getTable();
-            TableManager.setWinner(table, true);
+            
+            if (!table.gameEnded()) {
+                final int status = new QuitConfirmation(
+                "Are you sure you want to give up?",
+                "Surrender Confirmation", null).getReturnStatus();
+                
+                if (status == QuitConfirmation.RET_YES) {
+                    TableManager.setWinner(table, true);
+                }
+            }
         }
     }//GEN-LAST:event_surrenderButtonActionPerformed
 
@@ -268,6 +353,11 @@ public class PlayerSetting extends CardPanelRegistry {
     }//GEN-LAST:event_undoButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel playerOneName;
+    private javax.swing.JLabel playerOneScore;
+    private javax.swing.JLabel playerTwoName;
+    private javax.swing.JLabel playerTwoScore;
+    private javax.swing.JPanel playerWins;
     private javax.swing.JLabel title;
     // End of variables declaration//GEN-END:variables
 }

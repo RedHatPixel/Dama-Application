@@ -147,8 +147,10 @@ public final class TilePanelSystem implements MouseListener {
         // Flip board game play
         else if (GameInfo.canChangeTurn()) {
             
-            getBoardPanel().setDirection(getBoardPanel().getCurrentDirection().opposite());
-            TableManager.reversePlayerPanel(getTable());
+            if (!getGameBoard().getLatestMove().getType().canAttackAgain()) {
+                getBoardPanel().setDirection(getBoardPanel().getCurrentDirection().opposite());
+                TableManager.reversePlayerPanel(getTable());
+            }
         }
     }
     
@@ -160,6 +162,7 @@ public final class TilePanelSystem implements MouseListener {
         SwingUtilities.invokeLater(() -> {
             getBoardPanel().drawBoard(getGameBoard());
             getBoardPanel().highlightLatestMove(getGameBoard());
+            getBoardPanel().drawMovable(getGameBoard());
         });
     }
     

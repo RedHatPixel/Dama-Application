@@ -1,10 +1,7 @@
 package component.Panel;
 
 import com.dama.gui.game_panel.Table;
-import component.OptionPane.QuitGameConfirmation;
-import component.Panel.CardHandlers.CardLayoutManager;
-
-import component.Panel.CardHandlers.CardPanelRegistry;
+import component.Panel.CardHandlers.*;
 import main.MainFrame;
 
 import utilities.CommonConstants;

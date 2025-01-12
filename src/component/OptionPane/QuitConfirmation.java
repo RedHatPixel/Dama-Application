@@ -15,12 +15,16 @@ public class QuitConfirmation extends JDialog {
      * A return status code - returned if Cancel button has been pressed
      * A return status code - returned if OK button has been pressed
      */
-    
     public static final int RET_NO = 0;
     public static final int RET_YES = 1;
     
-    public QuitConfirmation(final Frame parent, final boolean modal) {
-        super(parent, modal);
+    private final String message;
+    private final String title;
+    
+    public QuitConfirmation(final String message, final String title, final Frame parent) {
+        super(parent, true);
+        this.message = message;
+        this.title = title;
         initComponents();
         setVisible(true);
         
@@ -36,10 +40,7 @@ public class QuitConfirmation extends JDialog {
             }
         });
     }
-    
-    /**
-     * @return the return status of this dialog - one of RET_OK or RET_CANCEL
-     */
+
     public int getReturnStatus() {
         return returnStatus;
     }
@@ -52,17 +53,18 @@ public class QuitConfirmation extends JDialog {
         MainButton yesButton = new MainButton();
         MainButton noButton = new MainButton();
 
+        setLayout(new BorderLayout());
+        setLocationRelativeTo(null);
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Quit Confirmation");
+        setTitle(title);
         setIconImage(Configurations.loadImage(IMAGE_DIRECTORY));
         setBackground(new java.awt.Color(43, 42, 40));
-        setMinimumSize(new java.awt.Dimension(240, 180));
         setName("quitDialog"); // NOI18N
-        setPreferredSize(new java.awt.Dimension(240, 180));
+        setPreferredSize(new java.awt.Dimension(280, 180));
+        setMinimumSize(getPreferredSize());
+        setSize(getPreferredSize());
         setResizable(false);
-        setSize(new java.awt.Dimension(240, 180));
         setType(java.awt.Window.Type.POPUP);
-        
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent evt) {
@@ -81,7 +83,8 @@ public class QuitConfirmation extends JDialog {
                 FontName.POPPINS_REGULAR, FontType.POPPINS, 12));
         question.setForeground(new java.awt.Color(255, 255, 255));
         question.setHorizontalAlignment(SwingConstants.CENTER);
-        question.setText("Are you sure you want to quit?");
+        question.setHorizontalTextPosition(SwingConstants.CENTER);
+        question.setText(message);
         question.setMaximumSize(new java.awt.Dimension(172, 70));
         question.setMinimumSize(new java.awt.Dimension(172, 70));
         question.setPreferredSize(new java.awt.Dimension(172, 70));
@@ -95,29 +98,32 @@ public class QuitConfirmation extends JDialog {
 
         yesButton.setText("Yes");
         yesButton.requestFocus();
-        yesButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-                yesButtonActionPerformed();
-            }
+        yesButton.addActionListener((ActionEvent evt) -> {
+            yesButtonActionPerformed();
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.gridwidth = 1;
+        gridBagConstraints.gridheight = 1;
+        gridBagConstraints.weightx = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new Insets(0, 10, 0, 10);
         background.add(yesButton, gridBagConstraints);
 
         noButton.setText("No");
-        noButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-                noButtonActionPerformed();
-            }
+        noButton.addActionListener((ActionEvent evt) -> {
+            noButtonActionPerformed();
         });
+        
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.gridwidth = 1;
+        gridBagConstraints.gridheight = 1;
+        gridBagConstraints.weightx = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new Insets(0, 10, 0, 10);
         background.add(noButton, gridBagConstraints);
 
         getContentPane().add(background, java.awt.BorderLayout.CENTER);

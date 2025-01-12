@@ -102,6 +102,8 @@ public final class BoardPanel extends JPanel {
         repaint();
     }
     
+    //-------------TilePanel_Helper_Methods----------------//
+    
     /**
      * Get the parent table of the BoardPanel
      * USED: for the system(TilePanel) only -> same package only
@@ -142,6 +144,8 @@ public final class BoardPanel extends JPanel {
         return null;
     }
     
+    //-------------Table_Helper_Methods----------------//
+    
     /**
      * Set the new direction of the board
      * USED: for the setting(Table) only -> same package only
@@ -150,6 +154,7 @@ public final class BoardPanel extends JPanel {
     public void setDirection(final Direction direction) {
         this.direction = direction;
         drawBoard(table.getGameBoard());
+        drawMovable(table.getGameBoard());
     }
     
     /**
@@ -192,6 +197,19 @@ public final class BoardPanel extends JPanel {
     }
     
     /**
+     * Display the possible movable pieces on the board
+     * USED: for the system(TilePanel) only -> same package only
+     * @param board Board
+     */
+    public void drawMovable(final Board board) {
+        for (final TilePanel tilePanel : boardTiles.values()) {
+            tilePanel.drawMovable(board);
+        }
+        validate();
+        repaint();
+    }
+    
+    /**
      * Display the possible movement of the piece
      * USED: for the system(TilePanel) only -> same package only
      * @param piece Piece
@@ -204,6 +222,8 @@ public final class BoardPanel extends JPanel {
         validate();
         repaint();
     }
+    
+    //-------------BoardPanel_System----------------//
     
     /**
      * Display the latest moves of the piece

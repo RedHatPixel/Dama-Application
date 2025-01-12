@@ -22,7 +22,9 @@ public class MainFrame extends FrameCardManager {
     }
     
     public void closeWindow() {
-        final int status = new QuitConfirmation(this, true).getReturnStatus();
+        final int status = new QuitConfirmation(
+                "Are you sure you want to quit?", 
+                "Quit Confirmation", this).getReturnStatus();
         if (status == component.OptionPane.QuitConfirmation.RET_YES) {
             this.dispose();
             System.exit(0);

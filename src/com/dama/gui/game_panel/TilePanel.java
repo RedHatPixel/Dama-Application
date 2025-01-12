@@ -97,6 +97,8 @@ public final class TilePanel extends JPanel {
         repaint();
     }
     
+    //-------------BoardPanel_Helper_Methods---------------//
+    
     /**
      * Reset the tile display configuration
      * USED: for the manager(BoardPanel) only -> same package only
@@ -107,13 +109,22 @@ public final class TilePanel extends JPanel {
         assigned = false;
         threaten = false;
         approval = false;
-        highlightMovablePiece(board);
         assignTilePieceIcon(board);
         setBackgroundRespectiveColor();
         initializeAndResizeTileIcon();
     }
     
-    //-------------BoardPanel_Help_Methods---------------//
+    /** 
+     * Show the possible movable pieces
+     * USED: for the manager(BoardPanel) only -> same package only
+     * @param board Board
+     */
+    void drawMovable(final Board board) {
+        approval = false;
+        highlightMovablePiece(board);
+        setBackgroundRespectiveColor();
+        initializeAndResizeTileIcon();
+    }
     
     /**
      * Show the after movement
@@ -128,6 +139,7 @@ public final class TilePanel extends JPanel {
     }
     
     /**
+     * Show the pathway of moves and capturable pieces
      * USED: for the manager(BoardPanel) only -> same package only
      * @param piece Piece
      * @param board Board
@@ -135,7 +147,6 @@ public final class TilePanel extends JPanel {
     void drawGuidance(final Piece piece, final Board board) {
         selected = false;
         threaten = false;
-        approval = false;
         highlightTilePiece(piece, board);
         highlightTileBackgroundCaptures(piece, board);
         assignTilePieceIcon(board);

@@ -1,7 +1,6 @@
 package com.dama.gui;
 
 import com.dama.engine.board.Board;
-import com.dama.gui.game_panel.PlayerPanel;
 import com.dama.gui.game_panel.Table;
 import com.dama.gui.game_panel.Table.Status;
 import com.dama.sound.SoundManager;
@@ -31,7 +30,7 @@ public final class TableManager {
     }
     
     public static void setWinner(final Table table, final boolean opponent) {
-        if (table.getStatus() == null) {
+        if (!table.gameEnded()) {
             if (opponent) {
                 if (table.getGameBoard().getCurrentPlayer().getOpponent().getAlliance().isWhite()) {
                     table.setStatus(Status.WHITE_PLAYER_WIN);
@@ -54,10 +53,12 @@ public final class TableManager {
     }
     
     public static void setStalemate(final Table table) {
-        table.setStatus(Status.STALEMATE);
-        stopPlayerTimer(table);
-        table.getBoardPanel().disableBoard();
-        table.getBoardPanel().getDragGlassPane().showGameEnd(table.getStatus(), table);
+        if (!table.gameEnded()) {
+            table.setStatus(Status.STALEMATE);
+            stopPlayerTimer(table);
+            table.getBoardPanel().disableBoard();
+            table.getBoardPanel().getDragGlassPane().showGameEnd(table.getStatus(), table);
+        }
     }
     
     public static void undoMove(final Table table) {
@@ -98,6 +99,7 @@ public final class TableManager {
             table.getBoardPanel().disableBoard();
             if (table.isOnGame() && !table.gameEnded()) {
                 table.getBoardPanel().openBoard();
+                table.getBoardPanel().drawMovable(table.getGameBoard());
             }
         }
     }
