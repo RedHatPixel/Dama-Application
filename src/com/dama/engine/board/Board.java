@@ -135,7 +135,7 @@ public class Board {
      * @param gamePlay List of Board
      * @return List of Board
      */
-    public List<Board> calculate50LatestMove(final List<Board> gamePlay) {
+    public static List<Board> calculate50LatestMove(final List<Board> gamePlay) {
         final List<Board> boards = new ArrayList<>();
         
         if (gamePlay.size() >= 50) {
@@ -150,6 +150,23 @@ public class Board {
         }
         else boards.addAll(gamePlay);
         return Collections.unmodifiableList(boards);
+    }
+    
+    /**
+     * Check the player latest move among the captures
+     * @param gamePlay  List of Board
+     * @return Board
+     */
+    public static int getPlayerLatestMove(final List<Board> gamePlay) {
+        int index = Math.max(0, gamePlay.size() - 1);
+        for (int i = gamePlay.size() -1; i >= 0; i--) {
+            if (gamePlay.get(i).getLatestMove().getType().canAttack()) {
+                index = i;
+                continue;
+            }
+            return index;
+        }
+        return index;
     }
     
     /**

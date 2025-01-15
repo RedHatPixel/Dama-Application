@@ -1,6 +1,6 @@
 package main;
 
-import utilities.Directory;
+import appGui.frames.MainFrame;
 
 public class AppLauncher {
 
@@ -22,7 +22,6 @@ public class AppLauncher {
         java.awt.EventQueue.invokeLater(() -> {
             MainFrame main = new MainFrame();
             main.setVisible(true);
-            Directory.insertParent(main);
         });
     }
     
