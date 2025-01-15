@@ -213,6 +213,7 @@ public class History extends javax.swing.JPanel {
             this.setPreferredSize(mainSize);
         });
         
+        int iterator = 0;
         for (int x = (gameData.size() - 1); x >= 0; x--) {
             final GameData data = gameData.get(x);
             final HistoryData dataPanel = new HistoryData(data);
@@ -220,12 +221,13 @@ public class History extends javax.swing.JPanel {
             java.awt.GridBagConstraints gridBagConstraints;
             gridBagConstraints = new java.awt.GridBagConstraints();
             gridBagConstraints.gridx = 0;
-            gridBagConstraints.gridy = x;
+            gridBagConstraints.gridy = iterator;
             gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
             gridBagConstraints.weightx = 1.0;
             gridBagConstraints.weighty = 1.0;
             gridBagConstraints.insets = new java.awt.Insets(0, 5, 5, 5);
             content.add(dataPanel, gridBagConstraints);
+            iterator++;
         }
 
         content.revalidate();

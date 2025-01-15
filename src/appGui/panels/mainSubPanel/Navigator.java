@@ -2,7 +2,7 @@ package appGui.panels.mainSubPanel;
 
 import com.dama.gameGui.GameInfo;
 import appGui.frames.MainFrame;
-import appGui.frames.SettingFrame;
+import appGui.frames.Setting;
 import appGui.panels.*;
 import appGui.panels.CardHandlers.*;
 import appGui.panels.controlPanel.PlayerSetting;
@@ -242,7 +242,8 @@ public class Navigator extends javax.swing.JPanel {
     }//GEN-LAST:event_aboutButtonActionPerformed
 
     private void settingsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingsButtonActionPerformed
-        new SettingFrame();
+        final FrameCardManager mainManager = CardLayoutManager.getInstance(MainFrame.class);
+        new Setting(mainManager, true).setVisible(true);
     }//GEN-LAST:event_settingsButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
