@@ -6,6 +6,7 @@ import com.dama.engine.dependencies.Alliance;
 import com.dama.engine.pieces.Piece;
 import com.dama.gameGui.GameInfo;
 import com.dama.engine.sounds.SoundManager;
+import com.dama.gameGui.TableManager;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -58,17 +59,14 @@ public final class Table extends JPanel {
             this.bottomPlayerPanel = new PlayerPanel(this, gameBoard.getWhitePlayer(), GameInfo.getBotttomPlayerName());
             this.topPlayerPanel = new PlayerPanel(this, gameBoard.getBlackPlayer(), GameInfo.getTopPlayerName());
         } else { 
-            if (GameInfo.canChangeTurn()) {
+            if (GameInfo.canChangeTurn())
                 this.boardPanel.setDirection(BoardPanel.Direction.NORMAL);
-                this.bottomPlayerPanel = new PlayerPanel(this, gameBoard.getBlackPlayer(), GameInfo.getBotttomPlayerName());
-                this.topPlayerPanel = new PlayerPanel(this, gameBoard.getWhitePlayer(), GameInfo.getTopPlayerName());
-            } else {
+            else
                 this.boardPanel.setDirection(BoardPanel.Direction.FLIPPED);
-                this.bottomPlayerPanel = new PlayerPanel(this, gameBoard.getBlackPlayer(), GameInfo.getBotttomPlayerName());
-                this.topPlayerPanel = new PlayerPanel(this, gameBoard.getWhitePlayer(), GameInfo.getTopPlayerName());
-            }
+            this.bottomPlayerPanel = new PlayerPanel(this, gameBoard.getBlackPlayer(), GameInfo.getBotttomPlayerName());
+            this.topPlayerPanel = new PlayerPanel(this, gameBoard.getWhitePlayer(), GameInfo.getTopPlayerName());
         }
-
+        
         this.bottomPlayerPanel.startTimer(GameInfo.getGameDuration());
         this.topPlayerPanel.startTimer(GameInfo.getGameDuration());
         initComponents();
@@ -87,7 +85,7 @@ public final class Table extends JPanel {
         setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
         setName("Table");
         setRequestFocusEnabled(false);
-        if (GameInfo.canChangeTurn()) {
+        if (GameInfo.canChangeTurn() && GameInfo.getDirection() == GameInfo.GameSwitch.FLIPPED) {
             this.reversed = true;
             addComponents(topPlayerPanel, bottomPlayerPanel);
         } else {
