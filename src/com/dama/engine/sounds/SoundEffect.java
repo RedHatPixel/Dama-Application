@@ -6,6 +6,8 @@ import java.io.IOException;
 
 public final class SoundEffect {
     private final Clip clip;
+    private boolean isMuted;
+    private float originalVolume;
 
     // Constructor: Create a new sound using a filePath
     SoundEffect(final String filePath) {
@@ -14,16 +16,16 @@ public final class SoundEffect {
             final AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(filePath));
             clipX = AudioSystem.getClip();
             clipX.open(audioInputStream);
-            setVolume(1f);
+            
         } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
             System.err.println("Error loading sound: " + e.getMessage());
         }
         this.clip = clipX;
+        this.isMuted = false;
+        this.originalVolume = 1f;
+        setVolume(originalVolume);
     }
-    
-    /**
-     * Play the sound effect
-     */
+
     public void play() {
         if (clip != null) {
             if (clip.isRunning()) {
@@ -32,10 +34,6 @@ public final class SoundEffect {
             }
             clip.setFramePosition(0);
             clip.start();
-            
-            synchronized (clip) {
-                clip.start();
-            }
         }
     }
     
@@ -103,9 +101,15 @@ public final class SoundEffect {
         if (clip == null || !clip.isOpen())
             return;
 
+        // Clamp volume to [0.0, 1.0]
+        volume = Math.max(0.0f, Math.min(volume, 1.0f));
+        originalVolume = volume;
+        
+        if (isMuted) return;
+
         final FloatControl volumeControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-        final float min = volumeControl.getMinimum();
-        final float max = volumeControl.getMaximum();
+        final float min = volumeControl.getMinimum(); // e.g., -80.0 dB
+        final float max = volumeControl.getMaximum(); // e.g., 6.0206 dB
         final float gain = min + (max - min) * volume;
         volumeControl.setValue(gain);
     }
@@ -116,7 +120,9 @@ public final class SoundEffect {
      */
     public float getVolume() {
         if (clip == null || !clip.isOpen())
-            return 0;
+            return 0f;
+        
+        if (isMuted) return originalVolume;
         
         final FloatControl volumeControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
         final float min = volumeControl.getMinimum();
@@ -131,5 +137,36 @@ public final class SoundEffect {
      */
     public boolean isPlaying() {
         return clip != null && clip.isRunning();
+    }
+    
+    /**
+     * Mute the sound effect
+     */
+    public void mute() {
+        if (clip == null || !clip.isOpen() || isMuted)
+            return;
+
+        isMuted = true;
+        final FloatControl volumeControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+        volumeControl.setValue(volumeControl.getMinimum()); // Set volume to minimum (mute)
+    }
+    
+    /**
+     * Unmute the sound effect
+     */
+    public void unMute() {
+        if (clip == null || !clip.isOpen() || !isMuted)
+            return;
+
+        isMuted = false;
+        setVolume(originalVolume); // Restore the original volume
+    }
+    
+    /**
+     * Check if the clip is muted
+     * @return Boolean
+     */
+    public boolean isMuted() {
+        return this.isMuted;
     }
 }

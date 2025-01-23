@@ -45,6 +45,28 @@ public class SoundManager {
         Sounds.GAME_END_SOUND.setVolume(volume);
     }
     
+    public static boolean isMutedSoundEffects() {
+        final boolean sMove = Sounds.MOVE_PIECE_SOUNDS.isMuted();
+        final boolean sCapture = Sounds.MOVE_PIECE_SOUNDS.isMuted();
+        final boolean sStart = Sounds.MOVE_PIECE_SOUNDS.isMuted();
+        final boolean sEnd = Sounds.MOVE_PIECE_SOUNDS.isMuted();
+        return sMove && sCapture && sStart && sEnd;
+    }
+    
+    public static void muteSoundEffects() {
+        Sounds.MOVE_PIECE_SOUNDS.mute();
+        Sounds.MOVE_CAPTURE_SOUND.mute();
+        Sounds.GAME_START_SOUND.mute();
+        Sounds.GAME_END_SOUND.mute();
+    }
+    
+    public static void unMuteSoundEffects() {
+        Sounds.MOVE_PIECE_SOUNDS.unMute();
+        Sounds.MOVE_CAPTURE_SOUND.unMute();
+        Sounds.GAME_START_SOUND.unMute();
+        Sounds.GAME_END_SOUND.unMute();
+    }
+    
     public static class Sounds {
 
         private static double[][] MOVE_SEGMENTS = {

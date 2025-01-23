@@ -1,12 +1,11 @@
 package com.dama.engine.pieces;
 
 import com.dama.engine.dependencies.Move;
-import com.dama.engine.dependencies.Move.*;
 import com.dama.engine.dependencies.Alliance;
 import com.dama.engine.dependencies.Position;
 import com.dama.engine.board.Board;
-import com.dama.engine.board.BoardUtils;
 import com.dama.engine.board.Tile;
+import com.dama.engine.board.BoardUtils;
 import java.util.List;
 
 public final class Pawn extends Piece {

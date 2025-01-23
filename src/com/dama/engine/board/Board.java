@@ -131,45 +131,6 @@ public class Board {
     }
     
     /**
-     * Check if there is a capture move within 50 moves
-     * @param gamePlay List of Board
-     * @return List of Board
-     */
-    public static List<Board> calculate50LatestMove(final List<Board> gamePlay) {
-        final List<Board> boards = new ArrayList<>();
-        
-        if (gamePlay.size() >= 50) {
-            final int startAt = gamePlay.size() - 1;
-            final int endsAt = gamePlay.size() - 50;
-            for (int i = startAt; i >= endsAt; i--) {
-                if (gamePlay.get(i).getLatestMove().getType().isNaN())
-                    continue;
-                if (gamePlay.get(i).getLatestMove().getType().canAttack())
-                    boards.add(gamePlay.get(i));
-            }
-        }
-        else boards.addAll(gamePlay);
-        return Collections.unmodifiableList(boards);
-    }
-    
-    /**
-     * Check the player latest move among the captures
-     * @param gamePlay  List of Board
-     * @return Board
-     */
-    public static int getPlayerLatestMove(final List<Board> gamePlay) {
-        int index = Math.max(0, gamePlay.size() - 1);
-        for (int i = gamePlay.size() -1; i >= 0; i--) {
-            if (gamePlay.get(i).getLatestMove().getType().canAttack()) {
-                index = i;
-                continue;
-            }
-            return index;
-        }
-        return index;
-    }
-    
-    /**
      * Create a Standard Board Layout
      * @return Board
      */

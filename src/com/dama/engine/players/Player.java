@@ -56,7 +56,7 @@ public abstract class Player {
      * Check if there is no legal moves
      * @return Boolean
      */
-    public boolean isStalemate() {
+    public boolean hasNoLegalMoves() {
         return this.legalMoves.isEmpty();
     }
     
@@ -64,7 +64,7 @@ public abstract class Player {
      * Check if there is no available pieces
      * @return Boolean
      */
-    public boolean isLooser() {
+    public boolean hasNoAvailablePieces() {
         return this.getActivePieces().isEmpty();
     }
     
