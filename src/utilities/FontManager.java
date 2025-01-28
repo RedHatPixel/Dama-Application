@@ -53,7 +53,7 @@ public final class FontManager {
 
     // Loader
     public static Map<String, Font> loadFontsFromFolder(final String fontType) {
-        final HashMap fontsFolder = new HashMap<>();
+        final HashMap<String, Font> fontsFolder = new HashMap<>();
         final File folder = new File(FONTS_LOCATION + fontType);
         
         if (folder.isDirectory()) {

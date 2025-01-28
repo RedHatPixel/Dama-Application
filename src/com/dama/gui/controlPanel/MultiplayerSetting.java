@@ -1,5 +1,6 @@
 package com.dama.gui.controlPanel;
 
+import app.customField.CompManager;
 import app.panels.CardHandlers.CardLayoutManager;
 import app.panels.CardHandlers.CardPanelRegistry;
 import app.panels.GamePlay;
@@ -16,28 +17,37 @@ public class MultiplayerSetting extends CardPanelRegistry {
 
     public MultiplayerSetting() {
         initComponents();
-        
-        title.setFont(FontManager.getFont(FontManager.FontName.POPPINS_BLACK, FontManager.FontType.POPPINS, title.getFont().getSize()));
+        init();
+        initialize();
+        revalidate();
+        repaint();
+    }
+    
+    @Override
+    protected void configurePanel() {
+        if (!CardLayoutManager.DESIGN_TIME)
+            CardLayoutManager.getInstance(SettingContainer.class).registerPanel(this, getName());
+    }
+
+    @Override
+    public String getPanelName() {
+        return "Multiplayer Setting";
+    }
+    
+    private void init() {
+        CompManager.setPoppinsFont(title, FontManager.FontName.POPPINS_BLACK);
         for (final Component comp : content.getComponents()) {
-            if (comp instanceof javax.swing.JLabel) {
-                javax.swing.JLabel jLabel = (javax.swing.JLabel) comp;
-                jLabel.setFont(FontManager.getFont(
-                        FontManager.FontName.POPPINS_BLACK, FontManager.FontType.POPPINS, jLabel.getFont().getSize()));
+            if (comp instanceof JLabel) {
+                CompManager.setPoppinsFont(comp, FontManager.FontName.POPPINS_BLACK);
             }
             else if (comp instanceof JRadioButton) {
-                JRadioButton jRadioButton = (JRadioButton) comp;
-                jRadioButton.setFont(FontManager.getFont(
-                        FontManager.FontName.POPPINS_BOLD, FontManager.FontType.POPPINS, jRadioButton.getFont().getSize()));
+                CompManager.setPoppinsFont(comp, FontManager.FontName.POPPINS_BOLD);
             }
             else if (comp instanceof JTextField) {
-                JTextField jTextField = (JTextField) comp;
-                jTextField.setFont(FontManager.getFont(
-                        FontManager.FontName.POPPINS_MEDIUM, FontManager.FontType.POPPINS, jTextField.getFont().getSize()));
+                CompManager.setPoppinsFont(comp, FontManager.FontName.POPPINS_MEDIUM);
             }
-            else if (comp instanceof javax.swing.JCheckBox) {
-                javax.swing.JCheckBox jCheckBox = (javax.swing.JCheckBox) comp;
-                jCheckBox.setFont(FontManager.getFont(
-                        FontManager.FontName.POPPINS_SEMIBOLD, FontManager.FontType.POPPINS, jCheckBox.getFont().getSize()));
+            else if (comp instanceof JCheckBox) {
+                CompManager.setPoppinsFont(comp, FontManager.FontName.POPPINS_SEMIBOLD);
             }
         }
         
@@ -52,25 +62,10 @@ public class MultiplayerSetting extends CardPanelRegistry {
         
         bulletRadio.setSelected(true);
         whiteRadio.setSelected(true);
-        
-        initialize();
-        validate();
-        repaint();
-    }
-    
-    @Override
-    protected void configurePanel() {
-        if (!CardLayoutManager.DESIGN_TIME)
-            CardLayoutManager.getInstance(SettingContainer.class).registerPanel(this, getName());
-    }
-
-    @Override
-    public String getPanelName() {
-        return "Multiplayer Setting";
     }
    
     private void updateAllianceAppearance(final JRadioButton button, final ItemEvent e) {
-        if (e.getStateChange() == ItemEvent.SELECTED) {
+        if (e.getStateChange()== ItemEvent.SELECTED) {
             button.setBackground(new Color(102,102,102));
         } else {
             button.setBackground(new Color(38,37,34));
@@ -92,7 +87,7 @@ public class MultiplayerSetting extends CardPanelRegistry {
     }
     
     private boolean limitStringCapacity(final JTextField textField) {
-        if (textField.getText().length() > 14 && textField.getText().isBlank()) {
+        if (textField.getText().length() > 14 && textField.getText().trim().isEmpty()) {
             textField.setText("");
             return true;
         }
@@ -119,10 +114,9 @@ public class MultiplayerSetting extends CardPanelRegistry {
         if (playerOneError || playerTwoError) return null;
 
         final GameBuilder builder = new GameBuilder();
-        
         final String selectedColor = SelectedColor.getSelection() != null ?
-        SelectedColor.getSelection().getActionCommand() :
-        "No Alliance selected";
+            SelectedColor.getSelection().getActionCommand() : 
+            "No Alliance selected";
         switch (selectedColor) {
             case "White":
                 builder.setOrientation(Orientation.NORMAL);
@@ -137,8 +131,8 @@ public class MultiplayerSetting extends CardPanelRegistry {
         }
         
         final String selectedDuration = SelectedDuration.getSelection() != null
-        ? SelectedDuration.getSelection().getActionCommand()
-        : "No duration selected";
+            ? SelectedDuration.getSelection().getActionCommand()
+            : "No duration selected";
         switch (selectedDuration) {
             case "Bullet":
                 builder.setTimerDuration(Duration.BULLET);
@@ -162,14 +156,12 @@ public class MultiplayerSetting extends CardPanelRegistry {
         builder.allowShowingMovablePiece(checkMovePiece.isSelected());
         builder.allowShowingMoves(checkMove.isSelected());
         builder.isPlayable(true);
-        
         return builder.build();
     }
     
     public void createNewGame(final TablePanel table) {
         if (CardPanelRegistry.isInstanced(GamePlay.class)) {
             CardPanelRegistry.getInstance(GamePlay.class).makeNewTable(table);
-            
             if (CardPanelRegistry.isInstanced(PlayerSetting.class)) {
                 final PlayerSetting playerSetting = CardPanelRegistry.getInstance(PlayerSetting.class);
                 CardLayoutManager.getInstance(SettingContainer.class).showPanel(playerSetting);
@@ -183,7 +175,7 @@ public class MultiplayerSetting extends CardPanelRegistry {
         createNewGame(table);
     }
     
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "deprecation"})
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
@@ -220,7 +212,6 @@ public class MultiplayerSetting extends CardPanelRegistry {
         setFocusable(false);
         setMinimumSize(new java.awt.Dimension(330, 600));
         setName("Multiplayer Setting"); // NOI18N
-        setNextFocusableComponent(playerTwoName);
         setPreferredSize(new java.awt.Dimension(330, 600));
         setRequestFocusEnabled(false);
         setLayout(new java.awt.GridBagLayout());

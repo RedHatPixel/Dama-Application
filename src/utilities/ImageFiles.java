@@ -19,8 +19,14 @@ public class ImageFiles {
     public static final String STOP_WATCH_DIR = IMAGE_DIRECTORIES + "game_icon/stopwatch.png";
     public static final String LINK_DIR = IMAGE_DIRECTORIES + "game_icon/link.png";
     
+    public static final String CHECK_DIR = IMAGE_DIRECTORIES + "game_icon/checkSetting.png";
+    public static final String PREVENT_DIR = IMAGE_DIRECTORIES + "game_icon/preventSetting.png";
+    
     public static final String LEARN_DIR = IMAGE_DIRECTORIES + "image_design/learn.png";
     public static final String ABOUT_DIR = IMAGE_DIRECTORIES + "image_design/about.png";
+    public static final String LOGINSIGNUP_BG_DIR = IMAGE_DIRECTORIES + "image_design/loginSignUpBg.jpg";
+            
+    public static final String LOADING_DIR = IMAGE_DIRECTORIES + "gif/Loading.gif";
     
     public static Image DAMA_LOGO;
     public static ImageIcon WHITE_SELECTION;
@@ -31,6 +37,9 @@ public class ImageFiles {
     public static ImageIcon BULLET;
     public static ImageIcon STOP_WATCH;
     public static ImageIcon LINK;
+    public static ImageIcon CHECK;
+    public static ImageIcon PREVENT;
+    public static ImageIcon LOADING;
     
     static {
         try {
@@ -47,7 +56,10 @@ public class ImageFiles {
             STOP_WATCH = ImageManager.getImage(STOP_WATCH_DIR);
             LINK = ImageManager.getImage(LINK_DIR);
             
+            CHECK = ImageManager.getImage(CHECK_DIR);
+            PREVENT = ImageManager.getImage(PREVENT_DIR);
             
+            LOADING = ImageManager.getImage(LOADING_DIR);
         }
         catch (Exception e) {
             System.err.println(e.getMessage());

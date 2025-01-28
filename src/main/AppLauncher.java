@@ -1,6 +1,6 @@
 package main;
 
-import app.frames.Login;
+import app.frames.LoginSignUpFrame;
 import app.frames.MainFrame;
 
 public class AppLauncher {
@@ -9,7 +9,7 @@ public class AppLauncher {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
 //            new MainFrame();
-        new Login();
+            new LoginSignUpFrame();
         });
     }
 }
