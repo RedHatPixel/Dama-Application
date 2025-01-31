@@ -23,7 +23,7 @@ public class GameInfo {
     void setPlayersName(final String opponentName, final String playerName) {
         if (opponentName.isBlank()) this.opponentName = GameUtils.createRandomName();
         else this.opponentName = opponentName;
-        if (opponentName.isBlank()) this.playerName = GameUtils.createRandomName();
+        if (playerName.isBlank()) this.playerName = GameUtils.createRandomName();
         else this.playerName = playerName;
     }
     

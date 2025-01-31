@@ -1,25 +1,38 @@
 package com.dama.gui.historyPanel;
 
+import app.frames.MainFrame;
+import com.db.connection.DatabaseConnection;
+import com.db.model.ModelHistory;
+import com.db.model.ModelProfile;
+import com.db.service.ServiceHistory;
 import utilities.FontManager;
 import utilities.FontManager.*;
-import com.dama.engine.records.GameData;
-import com.dama.engine.records.GameDataManager;
 import java.awt.Dimension;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-public class History extends javax.swing.JPanel {
+public class History extends JPanel {
 
+    
     public History() {
         initComponents();
-
+        
         titleLabel.setFont(FontManager.getFont(FontName.POPPINS_BOLD, FontType.POPPINS, titleLabel.getFont().getSize()));
         logoColumn.setFont(FontManager.getFont(FontName.POPPINS_MEDIUM, FontType.POPPINS, logoColumn.getFont().getSize()));
         PlayerColumn.setFont(FontManager.getFont(FontName.POPPINS_MEDIUM, FontType.POPPINS, PlayerColumn.getFont().getSize()));
         resultColumn.setFont(FontManager.getFont(FontName.POPPINS_MEDIUM, FontType.POPPINS, resultColumn.getFont().getSize()));
         dateColumn.setFont(FontManager.getFont(FontName.POPPINS_MEDIUM, FontType.POPPINS, dateColumn.getFont().getSize()));
         
-        refreshContent();
+        try {
+            refreshContent();
+        } catch (SQLException e) {
+            System.err.println("Something went wrong while loading all history -> History line 27");
+            System.out.println("Error: " + e.getMessage());
+        }
         this.revalidate();
         this.repaint();
     }
@@ -35,7 +48,8 @@ public class History extends javax.swing.JPanel {
         PlayerColumn = new javax.swing.JLabel();
         dateColumn = new javax.swing.JLabel();
         resultColumn = new javax.swing.JLabel();
-        logoColumn1 = new javax.swing.JLabel();
+        iconColumn = new javax.swing.JLabel();
+        editColumn = new javax.swing.JLabel();
         content = new javax.swing.JPanel();
 
         setBackground(new java.awt.Color(29, 28, 26));
@@ -48,7 +62,7 @@ public class History extends javax.swing.JPanel {
 
         title.setBackground(new java.awt.Color(38, 37, 34));
         title.setForeground(new java.awt.Color(255, 255, 255));
-        title.setMinimumSize(getPreferredSize());
+        title.setMinimumSize(title.getPreferredSize());
         title.setOpaque(false);
         title.setPreferredSize(new java.awt.Dimension(600, 90));
         title.setLayout(new java.awt.GridBagLayout());
@@ -68,7 +82,7 @@ public class History extends javax.swing.JPanel {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridwidth = 5;
+        gridBagConstraints.gridwidth = 6;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
@@ -151,23 +165,41 @@ public class History extends javax.swing.JPanel {
         gridBagConstraints.weighty = 1.0;
         title.add(resultColumn, gridBagConstraints);
 
-        logoColumn1.setFont(new java.awt.Font("Segoe UI Black", 1, 12)); // NOI18N
-        logoColumn1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        logoColumn1.setToolTipText(null);
-        logoColumn1.setFocusable(false);
-        logoColumn1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        logoColumn1.setMaximumSize(new java.awt.Dimension(10, 50));
-        logoColumn1.setMinimumSize(new java.awt.Dimension(10, 50));
-        logoColumn1.setName(""); // NOI18N
-        logoColumn1.setPreferredSize(new java.awt.Dimension(10, 50));
-        logoColumn1.setRequestFocusEnabled(false);
+        iconColumn.setFont(new java.awt.Font("Segoe UI Black", 1, 12)); // NOI18N
+        iconColumn.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        iconColumn.setToolTipText(null);
+        iconColumn.setFocusable(false);
+        iconColumn.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        iconColumn.setMaximumSize(new java.awt.Dimension(10, 50));
+        iconColumn.setMinimumSize(new java.awt.Dimension(10, 50));
+        iconColumn.setName(""); // NOI18N
+        iconColumn.setPreferredSize(new java.awt.Dimension(10, 50));
+        iconColumn.setRequestFocusEnabled(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        title.add(logoColumn1, gridBagConstraints);
+        title.add(iconColumn, gridBagConstraints);
+
+        editColumn.setFont(new java.awt.Font("Segoe UI Black", 1, 12)); // NOI18N
+        editColumn.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        editColumn.setToolTipText(null);
+        editColumn.setFocusable(false);
+        editColumn.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        editColumn.setMaximumSize(new java.awt.Dimension(10, 50));
+        editColumn.setMinimumSize(new java.awt.Dimension(10, 50));
+        editColumn.setName(""); // NOI18N
+        editColumn.setPreferredSize(new java.awt.Dimension(10, 50));
+        editColumn.setRequestFocusEnabled(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        title.add(editColumn, gridBagConstraints);
 
         add(title, java.awt.BorderLayout.NORTH);
 
@@ -185,26 +217,44 @@ public class History extends javax.swing.JPanel {
     private javax.swing.JLabel PlayerColumn;
     private javax.swing.JPanel content;
     private javax.swing.JLabel dateColumn;
+    private javax.swing.JLabel editColumn;
+    private javax.swing.JLabel iconColumn;
     private javax.swing.JLabel logoColumn;
-    private javax.swing.JLabel logoColumn1;
     private javax.swing.JLabel resultColumn;
     private javax.swing.JPanel title;
     private javax.swing.JLabel titleLabel;
     // End of variables declaration//GEN-END:variables
 
-    public void refreshContent() {
+    public void refreshContent() throws SQLException {
         content.removeAll();
-        List<GameData> gameData = GameDataManager.getGameResults();
-        gameData = gameData.subList(0, Math.min(GameDataManager.getGameCount(), 9));
-        final int gameDataSize = gameData.isEmpty() ? 1 : gameData.size();
-
+        if (!MainFrame.isInstance()) return;
+        final MainFrame mainManager = MainFrame.getInstance();
+        final ModelProfile user = mainManager.getUserProfile();
+        List<ModelHistory> gameHistory;
+        
+        final ServiceHistory history = mainManager.getServiceHistory();
+        final boolean online = history.isConnectionValid();
+        if (mainManager.isLogin() && online) {
+            gameHistory = history.getLatestHistory(user.getUserID(), 20);
+        } else {
+            if (mainManager.isLogin() && !online) {
+                DatabaseConnection.getInstance().reconnect(history);
+            }
+            final List<ModelHistory> localHistory = mainManager.getLocalHistory();
+            final int size = localHistory.size();
+            final List<ModelHistory> historySubList = new ArrayList<>(
+                    mainManager.getLocalHistory().subList(Math.max(size - 20, 0), size));
+            Collections.reverse(historySubList);
+            gameHistory = historySubList;
+        }
+        
         SwingUtilities.invokeLater(() -> {
             final int labelHeight = 60;
-            final int titleHeight = title.getSize().height;
-            
-            final int contentHeight = labelHeight * gameDataSize;
-            final int mainHeight = titleHeight + contentHeight;
+            final int titleHeight = (int) title.getPreferredSize().getHeight();
 
+            final int contentHeight = gameHistory.isEmpty() ? 80 : labelHeight * gameHistory.size();
+            final int mainHeight = titleHeight + contentHeight;
+            
             final Dimension contentSize = new Dimension((int) content.getPreferredSize().getWidth(), contentHeight);
             final Dimension mainSize = new Dimension((int) this.getPreferredSize().getWidth(), mainHeight);
 
@@ -214,21 +264,19 @@ public class History extends javax.swing.JPanel {
             this.setSize(mainSize);
         });
         
-        int iterator = 0;
-        for (int x = (gameData.size() - 1); x >= 0; x--) {
-            final GameData data = gameData.get(x);
+        for (int x = (gameHistory.size() - 1); x >= 0; x--) {
+            final ModelHistory data = gameHistory.get(x);
             final HistoryData dataPanel = new HistoryData(data);
             
             java.awt.GridBagConstraints gridBagConstraints;
             gridBagConstraints = new java.awt.GridBagConstraints();
             gridBagConstraints.gridx = 0;
-            gridBagConstraints.gridy = iterator;
+            gridBagConstraints.gridy = x;
             gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
             gridBagConstraints.weightx = 1.0;
             gridBagConstraints.weighty = 1.0;
             gridBagConstraints.insets = new java.awt.Insets(0, 5, 5, 5);
             content.add(dataPanel, gridBagConstraints);
-            iterator++;
         }
 
         content.revalidate();

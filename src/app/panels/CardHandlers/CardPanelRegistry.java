@@ -23,6 +23,13 @@ public abstract class CardPanelRegistry extends JPanel {
         else if (!DESIGN_TIME)
             INSTANCES.put(this.getClass(), (CardPanelRegistry) this);
     }
+    
+    /**
+     * Clear all instances after exiting an app
+     */
+    public static void clearInstances() {
+        INSTANCES.clear();
+    }
 
     /**
      * Retrieves the singleton instance of a specific panel class.

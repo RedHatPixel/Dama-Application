@@ -1,11 +1,13 @@
 package app.panels.loginSignUpPanels;
 
+import utilities.CompManager;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.MouseAdapter;
 import javax.swing.JPanel;
+import utilities.FontManager;
 
 public class PanelLoading extends JPanel {
 
@@ -13,6 +15,7 @@ public class PanelLoading extends JPanel {
         initComponents(); 
         setVisible(false); 
         addMouseListener(new MouseAdapter() {});
+        CompManager.setPoppinsFont(loading, FontManager.FontName.POPPINS_SEMIBOLD);
     }
     
     @Override
@@ -37,17 +40,23 @@ public class PanelLoading extends JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        javax.swing.JLabel loading = new javax.swing.JLabel();
+        loading = new javax.swing.JLabel();
 
         setFocusCycleRoot(true);
         setOpaque(false);
         setLayout(new java.awt.BorderLayout());
 
+        loading.setFont(new java.awt.Font("Segoe UI Black", 0, 14)); // NOI18N
+        loading.setForeground(new java.awt.Color(255, 255, 255));
         loading.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         loading.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/images/gif/Loading.gif"))); // NOI18N
+        loading.setText("Prompting to message your google account.");
+        loading.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        loading.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         add(loading, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel loading;
     // End of variables declaration//GEN-END:variables
 }

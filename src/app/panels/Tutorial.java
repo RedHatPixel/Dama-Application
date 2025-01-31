@@ -2,7 +2,6 @@ package app.panels;
 
 import app.panels.CardHandlers.CardLayoutManager;
 import app.panels.CardHandlers.CardPanelRegistry;
-import app.frames.MainFrame;
 import utilities.CommonConstants;
 
 public class Tutorial extends CardPanelRegistry {
@@ -21,7 +20,7 @@ public class Tutorial extends CardPanelRegistry {
     @Override
     protected void configurePanel() {
         if (!CardLayoutManager.DESIGN_TIME)
-            CardLayoutManager.getInstance(MainFrame.class).registerPanel(this, getName());
+            CardLayoutManager.getInstance(MainDirectory.class).registerPanel(this, getName());
     }
 
     @Override

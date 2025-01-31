@@ -3,7 +3,7 @@ package com.dama.gui.controlPanel;
 import com.dama.gui._controls.TableManager;
 import com.dama.gui.gamePanel.TablePanel;
 
-import app.frames.QuitConfirmation;
+import app.dialog.QuitConfirmation;
 import app.panels.CardHandlers.CardLayoutManager;
 import app.panels.CardHandlers.CardPanelRegistry;
 import app.panels.GamePlay;
@@ -335,7 +335,6 @@ public class PlayerSetting extends CardPanelRegistry {
         // End the game with current player giving up
         if (CardPanelRegistry.isInstanced(GamePlay.class)) {
             final TablePanel table = CardPanelRegistry.getInstance(GamePlay.class).getTable();
-            
             if (!table.gameEnded()) {
                 final int status = new QuitConfirmation(
                 "Are you sure you want to give up?",

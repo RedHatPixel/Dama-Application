@@ -1,24 +1,30 @@
 package app.panels.mainSubPanel;
 
+import app.dialog.NullConfirmation;
+import app.dialog.OkConfirmation;
+import app.frames.LoginSignUpFrame;
+import com.dama.gui.controlPanel.PlayerSetting;
+import utilities.CompManager;
 import app.frames.MainFrame;
-import app.frames.Setting;
+import app.dialog.Setting;
 import app.panels.CardHandlers.*;
 import app.panels.*;
-import com.dama.gui.controlPanel.PlayerSetting;
+import app.panels.loginSignUpPanels.Message;
+import com.db.connection.DatabaseConnection;
+import com.db.model.ModelProfile;
+import com.db.sounds.NotificationManager;
+import com.db.token.SessionManager;
 import utilities.CommonConstants;
-import utilities.FontManager;
 import utilities.FontManager.*;
 import utilities.ImageFiles;
-import utilities.ImageManager;
 
 public class Navigator extends javax.swing.JPanel {
     
     public Navigator() {
         initComponents();
-        
         setFont(CommonConstants.DEFAULT_FONT);
-        title.setFont(FontManager.getFont(FontName.POPPINS_BLACK, FontType.POPPINS, 28));
-        title.setIcon(ImageManager.getResizedImage(ImageFiles.DAMA_LOGO_DIR, 40, 40));
+        CompManager.setPoppinsFont(title, FontName.POPPINS_BLACK);
+        title.setIcon(ImageFiles.SMALL_DAMA_LOGO);
         this.revalidate();
         this.repaint();
     }
@@ -34,6 +40,7 @@ public class Navigator extends javax.swing.JPanel {
         playButton = new app.buttons.NavButton();
         learnButton = new app.buttons.NavButton();
         aboutButton = new app.buttons.NavButton();
+        accountButton = new app.buttons.NavButton();
         settingsButton = new app.buttons.NavButton();
         quitButton = new app.buttons.NavButton();
 
@@ -84,11 +91,11 @@ public class Navigator extends javax.swing.JPanel {
         navigation.setAlignmentY(0.0F);
         navigation.setFocusable(false);
         navigation.setFont(new java.awt.Font("Segoe UI Black", 1, 18)); // NOI18N
-        navigation.setMaximumSize(new java.awt.Dimension(3000, 220));
+        navigation.setMaximumSize(new java.awt.Dimension(3000, 250));
         navigation.setMinimumSize(navigation.getPreferredSize());
         navigation.setName("navigation"); // NOI18N
         navigation.setOpaque(false);
-        navigation.setPreferredSize(new java.awt.Dimension(150, 220));
+        navigation.setPreferredSize(new java.awt.Dimension(150, 300));
         navigation.setRequestFocusEnabled(false);
         navigation.setLayout(new java.awt.GridBagLayout());
 
@@ -143,6 +150,23 @@ public class Navigator extends javax.swing.JPanel {
         gridBagConstraints.weighty = 1.0;
         navigation.add(aboutButton, gridBagConstraints);
 
+        accountButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/images/selection_icon/profileIcon.png"))); // NOI18N
+        accountButton.setText("Account");
+        accountButton.setAlignmentY(0.0F);
+        accountButton.setIconTextGap(14);
+        accountButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                accountButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        navigation.add(accountButton, gridBagConstraints);
+
         settingsButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/images/selection_icon/settingsIcon.png"))); // NOI18N
         settingsButton.setText("Settings");
         settingsButton.setAlignmentY(0.0F);
@@ -154,7 +178,7 @@ public class Navigator extends javax.swing.JPanel {
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridy = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
@@ -204,13 +228,14 @@ public class Navigator extends javax.swing.JPanel {
             if (!setNewGame())   return;
         }
         
-        if (CardLayoutManager.isInstanced(MainFrame.class)) {
-            final FrameCardManager mainManager = CardLayoutManager.getInstance(MainFrame.class);
-            mainManager.showPanel(CardPanelRegistry.getInstance(MainMenu.class));
+        if (CardLayoutManager.isInstanced(MainDirectory.class)) {
+            final PanelCardManager manager = CardLayoutManager.getInstance(MainDirectory.class);
+            manager.showPanel(CardPanelRegistry.getInstance(MainMenu.class));
         }
         
         if (CardPanelRegistry.isInstanced(MainMenu.class)) {
             final MainMenu mainMenu = CardPanelRegistry.getInstance(MainMenu.class);
+            mainMenu.setProfile();
             mainMenu.updateHistory();
             mainMenu.setButtonStyle();
             mainMenu.setFooterSize();   
@@ -221,38 +246,68 @@ public class Navigator extends javax.swing.JPanel {
         if (isGamePlaying()) {
             if (!setNewGame())   return;
         }
-        final FrameCardManager mainManager = CardLayoutManager.getInstance(MainFrame.class);
-        mainManager.showPanel(CardPanelRegistry.getInstance(Tutorial.class));
+        final PanelCardManager manager = CardLayoutManager.getInstance(MainDirectory.class);
+        manager.showPanel(CardPanelRegistry.getInstance(Tutorial.class));
     }//GEN-LAST:event_learnButtonActionPerformed
 
     private void quitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quitButtonActionPerformed
-        final MainFrame mainManager = CardLayoutManager.getInstance(MainFrame.class);
-        mainManager.closeWindow();
+        MainFrame.getInstance().closeWindow();
     }//GEN-LAST:event_quitButtonActionPerformed
 
     private void playButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playButtonActionPerformed
         if (isGamePlaying()) {
             if (!setNewGame())   return;
         }
-        final FrameCardManager mainManager = CardLayoutManager.getInstance(MainFrame.class);
-        mainManager.showPanel(CardPanelRegistry.getInstance(GamePlay.class));
+        final PanelCardManager manager = CardLayoutManager.getInstance(MainDirectory.class);
+        manager.showPanel(CardPanelRegistry.getInstance(GamePlay.class));
     }//GEN-LAST:event_playButtonActionPerformed
 
     private void aboutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutButtonActionPerformed
         if (isGamePlaying()) {
             if (!setNewGame())   return;
         }
-        final FrameCardManager mainManager = CardLayoutManager.getInstance(MainFrame.class);
-        mainManager.showPanel(CardPanelRegistry.getInstance(About.class));
+        final PanelCardManager manager = CardLayoutManager.getInstance(MainDirectory.class);
+        manager.showPanel(CardPanelRegistry.getInstance(About.class));
     }//GEN-LAST:event_aboutButtonActionPerformed
 
     private void settingsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingsButtonActionPerformed
-        final FrameCardManager mainManager = CardLayoutManager.getInstance(MainFrame.class);
-        new Setting(mainManager, true).setVisible(true);
+        new Setting(MainFrame.getInstance(), true).setVisible(true);
     }//GEN-LAST:event_settingsButtonActionPerformed
+
+    private void accountButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_accountButtonActionPerformed
+        if (isGamePlaying()) {
+            if (!setNewGame())   return;
+        }
+        final MainFrame main = MainFrame.getInstance();
+        if (main.isLogin()) {
+            final PanelCardManager manager = CardLayoutManager.getInstance(MainDirectory.class);
+            final Account account = CardPanelRegistry.getInstance(Account.class);
+            account.displayProfile();
+            manager.showPanel(account);
+        } else {
+            final int status = new OkConfirmation(
+                "Login first to access your account.", 
+                "Signin Confirmation", main).getReturnStatus();
+            if (status == OkConfirmation.RET_OK) {
+                if (DatabaseConnection.getInstance().tryConnectionIfValid()) {
+                    final ModelProfile user = SessionManager.getSessionUser();
+                    main.dispose();
+                    if (user != null) {
+                        new MainFrame(user);
+                    } else {
+                        new LoginSignUpFrame();
+                    }
+                } else {
+                    main.showMessage(Message.MessageType.ERROR, "Cannot connect to the server.");
+                    NotificationManager.Sounds.WRONG_NOTIF.play();
+                }
+            }
+        }
+    }//GEN-LAST:event_accountButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private app.buttons.NavButton aboutButton;
+    private app.buttons.NavButton accountButton;
     private app.buttons.NavButton learnButton;
     private app.buttons.NavButton playButton;
     private app.buttons.NavButton quitButton;

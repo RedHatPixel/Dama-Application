@@ -1,11 +1,14 @@
 package com.dama.gui.gamePanel;
 
 import java.awt.Image;
+import java.io.IOException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.ImageIcon;
+import utilities.ImageLoader;
 
 public final class GuiUtils {
 
@@ -15,7 +18,7 @@ public final class GuiUtils {
     }
 
     // Static Variables
-    private static final String FILE_DIRECTORY = "src/resources/images/pieces/";
+    private static final String FILE_DIRECTORY = "resources/images/pieces/";
     private static final List<Integer> SPECIFIED_SIZES = 
             Arrays.asList(10, 20, 30, 40, 50, 60, 70, 80, 
                     90, 100, 110, 120, 130,140, 150, 160);
@@ -91,10 +94,13 @@ public final class GuiUtils {
      */
     private static ImageIcon loadImage(final String name) {
         try {
-            return new ImageIcon(FILE_DIRECTORY + name + ".png");
-        } catch (Exception e) {
+            final URL imageUrl = GuiUtils.class.getClassLoader().getResource(FILE_DIRECTORY + name + ".png");
+            if (imageUrl == null) {
+                throw new IOException("Image file not found: " + name);
+            }
+            return new ImageIcon(imageUrl);
+        } catch (IOException e) {
             System.err.println("Failed to load image for: " + FILE_DIRECTORY + name + ".png");
-            e.printStackTrace();
             return null;
         }
     }

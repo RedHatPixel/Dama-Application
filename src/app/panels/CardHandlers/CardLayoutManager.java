@@ -25,6 +25,11 @@ public interface CardLayoutManager {
         return CardLayoutInstances.getInstance(clazz);
     }
     
+    // Remove all the instances from the map
+    public static void clearInstances() {
+        CardLayoutInstances.INSTANCES.clear();
+    }
+    
     // Internal helper to manage instances
     final class CardLayoutInstances {
         private static final Map<Class<? extends CardLayoutManager>, CardLayoutManager> INSTANCES = new HashMap<>();

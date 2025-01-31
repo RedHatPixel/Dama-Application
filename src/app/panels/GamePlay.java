@@ -3,7 +3,6 @@ package app.panels;
 import app.panels.CardHandlers.CardLayoutManager;
 import app.panels.CardHandlers.CardPanelRegistry;
 import com.dama.gui.gamePanel.TablePanel;
-import app.frames.MainFrame;
 import com.dama.gui._configurations.game.GameBuilder;
 
 import utilities.CommonConstants;
@@ -28,7 +27,7 @@ public class GamePlay extends CardPanelRegistry {
     @Override
     protected void configurePanel() {
         if (!CardLayoutManager.DESIGN_TIME)
-            CardLayoutManager.getInstance(MainFrame.class).registerPanel(this, getName());
+            CardLayoutManager.getInstance(MainDirectory.class).registerPanel(this, getName());
     }
 
     @Override

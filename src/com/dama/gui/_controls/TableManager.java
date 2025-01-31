@@ -1,17 +1,21 @@
 package com.dama.gui._controls;
 
+import app.frames.MainFrame;
+import app.panels.CardHandlers.CardLayoutManager;
 import app.panels.CardHandlers.CardPanelRegistry;
 import com.dama.gui.controlPanel.PlayerSetting;
 import com.dama.engine.board.Board;
 import com.dama.engine.sounds.SoundManager;
-import com.dama.engine.records.GameData;
-import com.dama.engine.records.GameDataManager;
 import com.dama.engine.records.GamePlay;
 import com.dama.gui.gamePanel.TablePanel;
 import com.dama.gui._configurations.dependencies.Status;
 import com.dama.gui.gamePanel.PlayerPanel;
-import java.time.format.DateTimeFormatter;
-import java.time.LocalDate;
+import com.db.model.ModelHistory;
+import com.db.model.ModelProfile;
+import com.db.service.ServiceHistory;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.Instant;
 
 public final class TableManager {
     
@@ -79,16 +83,7 @@ public final class TableManager {
             if (CardPanelRegistry.isInstanced(PlayerSetting.class)) {
                 CardPanelRegistry.getInstance(PlayerSetting.class).setScoreInformation();
             }
-            
-            final GameData data = new GameData(
-                    table.getGameInfo().getDuration(),
-                    new PlayerPanel[] {
-                        table.getOpponentPanel(), table.getPlayerPanel()
-                    },
-                    table.getStatus(),
-                    LocalDate.now().format(DateTimeFormatter.ofPattern("MM / dd / yyyy"))
-            );
-            GameDataManager.addGameResult(data);
+            addHistoryData(table);
         }
     }
     
@@ -99,16 +94,7 @@ public final class TableManager {
             table.getBoardPanel().disableBoard();
             table.getBoardPanel().getDragGlassPane().showGameEnd(table.getStatus(), table);
             SoundManager.Sounds.GAME_END_SOUND.play();
-            
-            final GameData data = new GameData(
-                table.getGameInfo().getDuration(),
-                new PlayerPanel[] {
-                    table.getOpponentPanel(), table.getPlayerPanel()
-                },
-                table.getStatus(),
-                LocalDate.now().format(DateTimeFormatter.ofPattern("MM / dd / yyyy"))
-            );
-            GameDataManager.addGameResult(data);
+            addHistoryData(table);
         }
     }
     
@@ -178,5 +164,47 @@ public final class TableManager {
         if (CardPanelRegistry.isInstanced(PlayerSetting.class)) {
             CardPanelRegistry.getInstance(PlayerSetting.class).updateGameRecords();
         }
+    }
+    
+    public static void addHistoryData(final TablePanel table) {
+        final MainFrame mainManager = MainFrame.getInstance();
+        final ModelProfile user = mainManager.getUserProfile();
+        final ServiceHistory serviceHistory = mainManager.getServiceHistory();
+        
+        final PlayerPanel player = table.getStatus().getWinner(
+                table.getOpponentPanel(), table.getPlayerPanel());
+        String strStatus = null;
+        if (player == null) {
+            strStatus = "Draw";
+        } else if (table.getPlayerPanel().isSamePlayer(player)) {
+            strStatus = "Win";
+        } else if (table.getOpponentPanel().isSamePlayer(player)) {
+            strStatus = "Lose";
+        }
+        
+        final int userID = user != null ? user.getUserID() : 0;
+        final ModelHistory history = new ModelHistory(
+                0,
+                userID,
+                table.getGameInfo().getDuration().toString(),
+                table.getPlayerPanel().getPlayerInfo().getName(),
+                table.getOpponentPanel().getPlayerInfo().getName(),
+                table.getPlayerPanel().getPlayerInfo().getScore(),
+                table.getOpponentPanel().getPlayerInfo().getScore(),
+                strStatus
+        );
+        
+        if (mainManager.isLogin()) {
+            try {
+                serviceHistory.insertHistory(history);
+            } catch (SQLException e) {
+                System.err.println("Something went wrong when adding the data -> TableManager line 196");
+                System.err.println("Error: " + e.getMessage());
+            }
+        }
+        
+        final Timestamp gameTimestamp = Timestamp.from(Instant.now());
+        history.setGameDate(gameTimestamp);
+        mainManager.addDataFromLocalHistory(history);
     }
 }

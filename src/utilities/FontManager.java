@@ -3,7 +3,13 @@ package utilities;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.io.File;
+import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public final class FontManager {
@@ -37,11 +43,18 @@ public final class FontManager {
         }
     }
     
+    private static final Map<String, String[]> PoppinsFile = Map.of(
+        "Poppins", new String[] {
+            "Poppins-Black.ttf", "Poppins-Bold.ttf", "Poppins-ExtraBold.ttf",
+            "Poppins-ExtraLight.ttf", "Poppins-Light.ttf", "Poppins-Medium.ttf",
+            "Poppins-Regular.ttf", "Poppins-SemiBold.ttf", "Poppins-Thin.ttf"
+        }
+    );
+    
     public static enum FontType {
-        POPPINS(loadFontsFromFolder("Poppins"));
+        POPPINS(loadFontsFromFolder("Poppins", PoppinsFile.get("Poppins")));
         
         private final Map<String, Font> FONTS;
-        
         private FontType(final Map<String, Font> fonts) {
             this.FONTS = fonts;
         }
@@ -51,37 +64,35 @@ public final class FontManager {
         }
     }
 
-    // Loader
-    public static Map<String, Font> loadFontsFromFolder(final String fontType) {
+    // Loaders
+    public static Map<String, Font> loadFontsFromFolder(final String fontType, final String[] fontFiles) {
         final HashMap<String, Font> fontsFolder = new HashMap<>();
-        final File folder = new File(FONTS_LOCATION + fontType);
-        
-        if (folder.isDirectory()) {
-            File[] fontFiles = folder.listFiles((dir, name) -> name.toLowerCase().endsWith(".ttf"));
 
-            if (fontFiles != null) {
-                for (final File fontFile : fontFiles) {
-                    try (final java.io.FileInputStream fis = new java.io.FileInputStream(fontFile)) {
-                        
-                        // Make the file a font
-                        final Font font = Font.createFont(Font.TRUETYPE_FONT, fis);
-                        
-                        // Get the font file name
-                        final String fontName = font.getFontName();
-                        
-                        // Store the font name and file
-                        fontsFolder.put(fontName, font);
-                        
-                        // Register the font in the local graphic environment
-                        GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(font);
-                        
-                    } catch (Exception e) {
-                        System.err.println("Failed to load font: " + fontFile.getName() + " - Using default font.");
+        try {
+            final ClassLoader classLoader = FontManager.class.getClassLoader();
+            final String fontPath = "resources/fonts/" + fontType + "/";
+
+            for (final String fontFileName : fontFiles) {
+                try (final InputStream is = classLoader.getResourceAsStream(fontPath + fontFileName)) {
+                    if (is == null) {
+                        System.err.println("Font not found: " + fontPath + fontFileName);
+                        continue;
                     }
+
+                    Font font = Font.createFont(Font.TRUETYPE_FONT, is);
+                    font = font.deriveFont(Font.PLAIN, 12);
+                    final String fontName = font.getFontName();
+
+                    fontsFolder.put(fontName, font);
+                    GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(font);
+                } catch (Exception e) {
+                    System.err.println("Failed to load font: " + fontFileName + " - Using default font.");
                 }
             }
-        } 
-        
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         return fontsFolder;
     }
 

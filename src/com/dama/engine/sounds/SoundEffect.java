@@ -1,8 +1,9 @@
 package com.dama.engine.sounds;
 
+import com.db.sounds.SoundNotification;
 import javax.sound.sampled.*;
-import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 public final class SoundEffect {
     private final Clip clip;
@@ -10,10 +11,14 @@ public final class SoundEffect {
     private float originalVolume;
 
     // Constructor: Create a new sound using a filePath
-    SoundEffect(final String filePath) {
+    SoundEffect(final String resourcePath) {
         Clip clipX = null;
         try {
-            final AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(filePath));
+            final URL audioSrc = SoundNotification.class.getClassLoader().getResource(resourcePath);
+            if (audioSrc == null) {
+                System.err.println("Sound file not found: " + resourcePath);
+            }
+            final AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(audioSrc);
             clipX = AudioSystem.getClip();
             clipX.open(audioInputStream);
             

@@ -1,80 +1,81 @@
 package com.dama.gui.historyPanel;
 
-import com.dama.engine.records.GameData;
-import com.dama.gui._configurations.dependencies.Duration;
-import com.dama.gui.gamePanel.PlayerPanel;
-import utilities.FontManager;
+import app.frames.MainFrame;
+import app.panels.loginSignUpPanels.Message;
+import com.db.model.ModelHistory;
+import com.db.service.ServiceHistory;
+import com.db.sounds.NotificationManager;
 import utilities.FontManager.*;
 import utilities.ImageFiles;
 import javax.swing.JLabel;
 import java.awt.Component;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import utilities.CompManager;
 
 public class HistoryData extends javax.swing.JPanel {
     
-    public HistoryData(final GameData gameData) {
+    private ModelHistory history;
+    public HistoryData(final ModelHistory data) {
+        history = data;
         initComponents();
-        
+        init();
+        displayData();
+        this.revalidate();
+        this.repaint();
+    }
+    
+    public void init() {
         for (Component comp : this.getComponents()) {
             try {
-                JLabel label = (JLabel) comp;
-                label.setFont(
-                        FontManager.getFont(FontName.POPPINS_SEMIBOLD, FontType.POPPINS, label.getFont().getSize()));
+                if (comp instanceof JLabel) {
+                    CompManager.setPoppinsFont(comp, FontName.POPPINS_SEMIBOLD);
+                }
             }
             catch (Exception e) {
                 System.out.println(e.getMessage());
                 System.out.println("The comp cannot be cast as JLabel");
             }
         }
-        
-        final Duration duration = gameData.getDuration();
-        if (null != duration) switch (duration) {
-            case BULLET -> {
-                logo.setIcon(ImageFiles.BULLET);
-            }
-            case BLITZ -> {
-                logo.setIcon(ImageFiles.BOLT);
-            }
-            case RAPID -> {
-                logo.setIcon(ImageFiles.STOP_WATCH);
-            }
-            case INFINITE -> {
-                logo.setIcon(ImageFiles.LINK);
-            }
-            default -> {
-                logo.setIcon(ImageFiles.BOLT);
-            }
-        }
-        
-        final PlayerPanel playerPanel = gameData.getPlayerPanel(false);
-        final PlayerPanel opponentPanel = gameData.getPlayerPanel(true);
-        
-        playerOneName.setText(playerPanel.getPlayerInfo().getName());
-        playerTwoName.setText(opponentPanel.getPlayerInfo().getName());
-        
-        playerOneScore.setText("" + playerPanel.getPlayerInfo().getScore());
-        playerTwoScore.setText("" + opponentPanel.getPlayerInfo().getScore());
-        
-        final PlayerPanel winner = gameData.getStatus().getWinner(
-            opponentPanel, playerPanel);
-        
-        if (winner == null) {
-            this.result.setIcon(ImageFiles.LOSE_ICON);
-        }
-        else {
-            if (winner.getPlayerInfo().getPlayer().getAlliance().equals(
-                    playerPanel.getPlayerInfo().getPlayer().getAlliance()
-            )) {
-                this.result.setIcon(ImageFiles.WIN_ICON);
-            }
-            else {
-                this.result.setIcon(ImageFiles.LOSE_ICON);
-            }
-        }
-        this.date.setText(gameData.getDate());
-        this.revalidate();
-        this.repaint();
     }
 
+    public void displayData() {
+        final String gameType = history.getGameType();
+        if (gameType != null) {
+            switch (gameType) {
+                case "Bullet" -> {
+                    logo.setIcon(ImageFiles.BULLET);
+                }
+                case "Blitz" -> {
+                    logo.setIcon(ImageFiles.BOLT);
+                }
+                case "Rapid" -> {
+                    logo.setIcon(ImageFiles.STOP_WATCH);
+                }
+                case "Infinite" -> {
+                    logo.setIcon(ImageFiles.LINK);
+                }
+                default -> {
+                    logo.setIcon(ImageFiles.BOLT);
+                }
+            }
+        } 
+        playerOneName.setText(history.getPlayerOneName());
+        playerTwoName.setText(history.getPlayerTwoName());
+        playerOneScore.setText("" + history.getPlayerOneScore());
+        playerTwoScore.setText("" + history.getPlayerTwoScore());
+        if ("Win".equals(history.getGameStatus())) {
+            this.result.setIcon(ImageFiles.WIN_ICON);
+        } else {
+            this.result.setIcon(ImageFiles.LOSE_ICON);
+        }
+        final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        final String formattedDate = sdf.format(history.getGameDate());
+        this.date.setText(formattedDate);
+    }
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -87,6 +88,7 @@ public class HistoryData extends javax.swing.JPanel {
         playerTwoScore = new javax.swing.JLabel();
         result = new javax.swing.JLabel();
         date = new javax.swing.JLabel();
+        deleteButton = new app.buttons.NavButton();
 
         setBackground(new java.awt.Color(38, 37, 34));
         setForeground(new java.awt.Color(255, 255, 255));
@@ -219,13 +221,52 @@ public class HistoryData extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 5);
+        gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
         add(date, gridBagConstraints);
+
+        deleteButton.setBorder(null);
+        deleteButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/images/result_icon/delete.png"))); // NOI18N
+        deleteButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        deleteButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        deleteButton.setIconTextGap(0);
+        deleteButton.setMaximumSize(new java.awt.Dimension(40, 45));
+        deleteButton.setMinimumSize(new java.awt.Dimension(40, 45));
+        deleteButton.setPreferredSize(new java.awt.Dimension(40, 45));
+        deleteButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 5);
+        add(deleteButton, gridBagConstraints);
+        deleteButton.getAccessibleContext().setAccessibleName("");
     }// </editor-fold>//GEN-END:initComponents
 
+    private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
+        final MainFrame main = MainFrame.getInstance();
+        final ServiceHistory service = main.getServiceHistory();
+        try {
+            service.deleteHistory(history);
+            final History historyHolder = (History) getParent().getParent();
+            historyHolder.refreshContent();
+            main.showMessage(Message.MessageType.SUCCESS, "Data was deleted.");
+            NotificationManager.Sounds.CORRECT_NOTIF.play();
+        } catch (SQLException ex) {
+            main.showMessage(Message.MessageType.ERROR, "Cannot delete the data.");
+            NotificationManager.Sounds.WRONG_NOTIF.play();
+        }
+    }//GEN-LAST:event_deleteButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel date;
+    private app.buttons.NavButton deleteButton;
     private javax.swing.JLabel logo;
     private javax.swing.JLabel playerOneName;
     private javax.swing.JLabel playerOneScore;

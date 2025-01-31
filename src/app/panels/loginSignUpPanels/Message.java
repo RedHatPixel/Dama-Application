@@ -1,6 +1,6 @@
 package app.panels.loginSignUpPanels;
 
-import app.customField.CompManager;
+import utilities.CompManager;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -69,7 +69,6 @@ public class Message extends javax.swing.JPanel {
         setPreferredSize(new java.awt.Dimension(300, 38));
         setLayout(new java.awt.BorderLayout());
 
-        lbMessage.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         lbMessage.setForeground(new java.awt.Color(255, 255, 255));
         lbMessage.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbMessage.setText("Message");

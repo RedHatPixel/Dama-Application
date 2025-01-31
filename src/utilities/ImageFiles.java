@@ -5,7 +5,7 @@ import javax.swing.ImageIcon;
 
 public class ImageFiles {
     
-    public static final String IMAGE_DIRECTORIES = "src/resources/images/";
+    public static final String IMAGE_DIRECTORIES = "resources/images/";
     public static final String DAMA_LOGO_DIR = IMAGE_DIRECTORIES + "selection_icon/DamaLogo.png";
     
     public static final String WHITE_SELECTION_DIR = IMAGE_DIRECTORIES + "game_icon/WhiteSelection.png";
@@ -28,7 +28,12 @@ public class ImageFiles {
             
     public static final String LOADING_DIR = IMAGE_DIRECTORIES + "gif/Loading.gif";
     
+    public static final String VISIBLE_DIR = IMAGE_DIRECTORIES + "registers_icon/visible-eye.png";
+    public static final String INVISIBLE_DIR = IMAGE_DIRECTORIES + "registers_icon/hidden-eye.png";
+    
     public static Image DAMA_LOGO;
+    public static Image LOGINSIGNUP_BG;
+    public static ImageIcon SMALL_DAMA_LOGO;
     public static ImageIcon WHITE_SELECTION;
     public static ImageIcon BLACK_SELECTION;
     public static ImageIcon LOSE_ICON;
@@ -40,26 +45,33 @@ public class ImageFiles {
     public static ImageIcon CHECK;
     public static ImageIcon PREVENT;
     public static ImageIcon LOADING;
+    public static ImageIcon VISIBLE;
+    public static ImageIcon INVISIBLE;
     
     static {
         try {
-            DAMA_LOGO = ImageManager.getImage(DAMA_LOGO_DIR).getImage();
+            DAMA_LOGO = ImageLoader.getImage(DAMA_LOGO_DIR).getImage();
+            SMALL_DAMA_LOGO = ImageLoader.getResizedImage(DAMA_LOGO_DIR, 40, 40);
             
-            WHITE_SELECTION = ImageManager.getResizedImage(WHITE_SELECTION_DIR, 28, 28);
-            BLACK_SELECTION = ImageManager.getResizedImage(BLACK_SELECTION_DIR, 28, 28);
+            WHITE_SELECTION = ImageLoader.getResizedImage(WHITE_SELECTION_DIR, 28, 28);
+            BLACK_SELECTION = ImageLoader.getResizedImage(BLACK_SELECTION_DIR, 28, 28);
             
-            LOSE_ICON = ImageManager.getImage(LOSE_ICON_DIR);
-            WIN_ICON = ImageManager.getImage(WIN_ICON_DIR);
+            LOSE_ICON = ImageLoader.getImage(LOSE_ICON_DIR);
+            WIN_ICON = ImageLoader.getImage(WIN_ICON_DIR);
             
-            BOLT = ImageManager.getImage(BULLET_DIR);
-            BULLET = ImageManager.getImage(BOLT_DIR);
-            STOP_WATCH = ImageManager.getImage(STOP_WATCH_DIR);
-            LINK = ImageManager.getImage(LINK_DIR);
+            BOLT = ImageLoader.getImage(BOLT_DIR);
+            BULLET = ImageLoader.getImage(BULLET_DIR);
+            STOP_WATCH = ImageLoader.getImage(STOP_WATCH_DIR);
+            LINK = ImageLoader.getImage(LINK_DIR);
             
-            CHECK = ImageManager.getImage(CHECK_DIR);
-            PREVENT = ImageManager.getImage(PREVENT_DIR);
+            CHECK = ImageLoader.getImage(CHECK_DIR);
+            PREVENT = ImageLoader.getImage(PREVENT_DIR);
             
-            LOADING = ImageManager.getImage(LOADING_DIR);
+            LOGINSIGNUP_BG = ImageLoader.getImage(LOGINSIGNUP_BG_DIR).getImage();
+            LOADING = ImageLoader.getImage(LOADING_DIR);
+            
+            VISIBLE = ImageLoader.getImage(VISIBLE_DIR);
+            INVISIBLE = ImageLoader.getImage(INVISIBLE_DIR);
         }
         catch (Exception e) {
             System.err.println(e.getMessage());

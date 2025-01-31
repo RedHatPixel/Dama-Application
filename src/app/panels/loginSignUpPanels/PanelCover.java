@@ -1,7 +1,7 @@
  package app.panels.loginSignUpPanels;
 
 import app.buttons.MainButton;
-import app.customField.CompManager;
+import utilities.CompManager;
 import java.awt.*;
 import java.awt.event.*;
 import java.text.DecimalFormat;
@@ -9,7 +9,6 @@ import javax.swing.*;
 import net.miginfocom.swing.MigLayout;
 import utilities.FontManager;
 import utilities.ImageFiles;
-import utilities.ImageManager;
 
 public class PanelCover extends JPanel {
 
@@ -25,8 +24,7 @@ public class PanelCover extends JPanel {
         setOpaque(false);
         layout = new MigLayout("wrap, fill", "[center]", "push[]25[]10[]25[]push");
         setLayout(layout);
-        final ImageIcon icon = ImageManager.getImage(ImageFiles.LOGINSIGNUP_BG_DIR);
-        if (icon != null) backgroundImage = icon.getImage();
+        backgroundImage = ImageFiles.LOGINSIGNUP_BG;
         init();
     }
     

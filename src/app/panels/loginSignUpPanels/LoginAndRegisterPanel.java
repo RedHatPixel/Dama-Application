@@ -1,7 +1,8 @@
 package app.panels.loginSignUpPanels;
 
-import app.customField.CompManager;
-import app.customField.TextFieldManager;
+import utilities.CompManager;
+import utilities.TextFieldManager;
+import com.db.model.ModelLogin;
 import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,22 +16,28 @@ public class LoginAndRegisterPanel extends JLayeredPane {
         return user;
     }
     
-    private ModelUser user;
+    public ModelLogin getLogin() {
+        return dataLogin;
+    }
     
-    public LoginAndRegisterPanel(final ActionListener eventRegister) {
+    private ModelUser user;
+    private ModelLogin dataLogin;
+    
+    private final String nameHint = "Name";
+    private final String emailHint = "Email";
+    private final String passwordHint = "Password";
+    
+    public LoginAndRegisterPanel(final ActionListener eventRegister, final ActionListener eventLogin) {
         initComponents();
         initRegister(eventRegister);
-        initLogin();
+        initLogin(eventLogin);
     }
     
     private void initRegister(final ActionListener eventRegister) {
-        final String nameHint = "Name";
-        final String emailHint = "Email";
-        final String passwordHint = "Password";
         CompManager.setPoppinsFont(titleAcc, FontManager.FontName.POPPINS_BLACK);
         TextFieldManager.setHint(userName, userName.getForeground(), nameHint);
         TextFieldManager.setHint(userEmail, userEmail.getForeground(), emailHint);
-        TextFieldManager.setHint(userPassword, userPassword.getForeground(), passwordHint);
+        TextFieldManager.setHint(userPassword, userPassword.getForeground(), passwordHint, toggleVision);
         TextFieldManager.setPasswordVisionToggle(userPassword, toggleVision, passwordHint);
         TextFieldManager.setFont(userName);
         TextFieldManager.setFont(userEmail);
@@ -42,19 +49,26 @@ public class LoginAndRegisterPanel extends JLayeredPane {
             final String email = TextFieldManager.isHint(userEmail, emailHint) ?
                                 "" : userEmail.getText().trim();
             final String password = TextFieldManager.isHint(userPassword, passwordHint) ?
-                                "" : String.valueOf(userPassword.getPassword());
+                                "" : String.valueOf(userPassword.getPassword()).trim();
             user = new ModelUser(0, name, email, password);
         });
     }
     
-    private void initLogin() {
+    private void initLogin(final ActionListener eventLogin) {
         CompManager.setPoppinsFont(titleSignin, FontManager.FontName.POPPINS_BLACK);
-        TextFieldManager.setHint(userEmail1, userEmail1.getForeground(), "Email");
-        TextFieldManager.setHint(userPassword1, userPassword1.getForeground(), "Password");
-        TextFieldManager.setPasswordVisionToggle(userPassword1, toggleVision1, "Password");
+        TextFieldManager.setHint(userEmail1, userEmail1.getForeground(), emailHint);
+        TextFieldManager.setHint(userPassword1, userPassword1.getForeground(), passwordHint, toggleVision1);
+        TextFieldManager.setPasswordVisionToggle(userPassword1, toggleVision1, passwordHint);
         TextFieldManager.setFont(userEmail1);
         TextFieldManager.setFont(userPassword1);
-        CompManager.setPoppinsFont(forgetButton, FontManager.FontName.POPPINS_LIGHT);
+        loginButton.addActionListener(eventLogin);
+        loginButton.addActionListener((ActionEvent e) -> { 
+            final String email = TextFieldManager.isHint(userEmail1, emailHint) ?
+                                "" : userEmail1.getText().trim();
+            final String password = TextFieldManager.isHint(userPassword1, passwordHint) ?
+                                "" : String.valueOf(userPassword1.getPassword()).trim();
+            dataLogin = new ModelLogin(email, password);
+        });
     }
     
     public void showRegister(final boolean show) {
@@ -64,6 +78,17 @@ public class LoginAndRegisterPanel extends JLayeredPane {
         } else {
             card.show(this, login.getName());
         }
+    }
+    
+    public void resetRegister() {
+        TextFieldManager.setHint(userName, userName.getForeground(), nameHint);
+        TextFieldManager.setHint(userEmail, userEmail.getForeground(), emailHint);
+        TextFieldManager.setHint(userPassword, userPassword.getForeground(), passwordHint);
+    }
+    
+    public void resetLogin() {
+        TextFieldManager.setHint(userEmail1, userEmail1.getForeground(), emailHint);
+        TextFieldManager.setHint(userPassword1, userPassword1.getForeground(), passwordHint);
     }
     
     @SuppressWarnings("unchecked")
@@ -93,7 +118,6 @@ public class LoginAndRegisterPanel extends JLayeredPane {
         loginButton = new app.buttons.MainButton();
         javax.swing.JLabel leftSpace1 = new javax.swing.JLabel();
         javax.swing.JLabel rightSpace1 = new javax.swing.JLabel();
-        forgetButton = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(48, 46, 43));
         setMinimumSize(new java.awt.Dimension(400, 450));
@@ -133,6 +157,11 @@ public class LoginAndRegisterPanel extends JLayeredPane {
         userName.setPreferredSize(new java.awt.Dimension(280, 40));
         userName.setSelectedTextColor(new java.awt.Color(255, 255, 255));
         userName.setSelectionColor(new java.awt.Color(48, 46, 43));
+        userName.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                userNameActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 1;
@@ -157,6 +186,11 @@ public class LoginAndRegisterPanel extends JLayeredPane {
         userEmail.setPreferredSize(new java.awt.Dimension(280, 40));
         userEmail.setSelectedTextColor(new java.awt.Color(255, 255, 255));
         userEmail.setSelectionColor(new java.awt.Color(48, 46, 43));
+        userEmail.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                userEmailActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 2;
@@ -179,6 +213,11 @@ public class LoginAndRegisterPanel extends JLayeredPane {
         userPassword.setPreferredSize(new java.awt.Dimension(280, 40));
         userPassword.setSelectedTextColor(new java.awt.Color(255, 255, 255));
         userPassword.setSelectionColor(new java.awt.Color(48, 46, 43));
+        userPassword.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                userPasswordActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 3;
@@ -249,7 +288,7 @@ public class LoginAndRegisterPanel extends JLayeredPane {
 
         toggleVision.setBackground(new java.awt.Color(38, 37, 34));
         toggleVision.setForeground(new java.awt.Color(255, 255, 255));
-        toggleVision.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/images/registers_icon/visible-eye.png"))); // NOI18N
+        toggleVision.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/images/registers_icon/hidden-eye.png"))); // NOI18N
         toggleVision.setToolTipText("toggle password vision");
         toggleVision.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(102, 102, 102)));
         toggleVision.setContentAreaFilled(false);
@@ -346,6 +385,11 @@ public class LoginAndRegisterPanel extends JLayeredPane {
         userEmail1.setPreferredSize(new java.awt.Dimension(280, 40));
         userEmail1.setSelectedTextColor(new java.awt.Color(255, 255, 255));
         userEmail1.setSelectionColor(new java.awt.Color(48, 46, 43));
+        userEmail1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                userEmail1ActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 1;
@@ -387,6 +431,11 @@ public class LoginAndRegisterPanel extends JLayeredPane {
         userPassword1.setPreferredSize(new java.awt.Dimension(280, 40));
         userPassword1.setSelectedTextColor(new java.awt.Color(255, 255, 255));
         userPassword1.setSelectionColor(new java.awt.Color(48, 46, 43));
+        userPassword1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                userPassword1ActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 2;
@@ -397,7 +446,7 @@ public class LoginAndRegisterPanel extends JLayeredPane {
 
         toggleVision1.setBackground(new java.awt.Color(38, 37, 34));
         toggleVision1.setForeground(new java.awt.Color(255, 255, 255));
-        toggleVision1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/images/registers_icon/visible-eye.png"))); // NOI18N
+        toggleVision1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/images/registers_icon/hidden-eye.png"))); // NOI18N
         toggleVision1.setToolTipText("toggle password vision");
         toggleVision1.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(102, 102, 102)));
         toggleVision1.setContentAreaFilled(false);
@@ -419,7 +468,7 @@ public class LoginAndRegisterPanel extends JLayeredPane {
         loginButton.setText("SIGN IN");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
@@ -439,22 +488,6 @@ public class LoginAndRegisterPanel extends JLayeredPane {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         login.add(rightSpace1, gridBagConstraints);
-
-        forgetButton.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        forgetButton.setForeground(new java.awt.Color(255, 255, 255));
-        forgetButton.setText("Forget your password?");
-        forgetButton.setBorder(null);
-        forgetButton.setBorderPainted(false);
-        forgetButton.setContentAreaFilled(false);
-        forgetButton.setFocusable(false);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(20, 20, 0, 20);
-        login.add(forgetButton, gridBagConstraints);
 
         add(login, "login");
     }// </editor-fold>//GEN-END:initComponents
@@ -479,8 +512,45 @@ public class LoginAndRegisterPanel extends JLayeredPane {
         userPassword1.requestFocus();
     }//GEN-LAST:event_passwordLabel1MouseClicked
 
+    private void userNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userNameActionPerformed
+        if (userName.getText().isBlank() || TextFieldManager.isHint(userName, nameHint));
+        else if (userEmail.getText().isBlank() || TextFieldManager.isHint(userEmail, emailHint)) userEmail.requestFocus();
+        else if (String.valueOf(userPassword.getPassword()).isBlank() ||
+                 TextFieldManager.isHint(userPassword, passwordHint)) userPassword.requestFocus();
+        else signUpButton.doClick();
+    }//GEN-LAST:event_userNameActionPerformed
+
+    private void userEmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userEmailActionPerformed
+        if (userEmail.getText().isBlank() || TextFieldManager.isHint(userEmail, emailHint));
+        else if (userName.getText().isBlank() || TextFieldManager.isHint(userName, nameHint)) userName.requestFocus();
+        else if (String.valueOf(userPassword.getPassword()).isBlank() ||
+                 TextFieldManager.isHint(userPassword, passwordHint)) userPassword.requestFocus();
+        else signUpButton.doClick();
+    }//GEN-LAST:event_userEmailActionPerformed
+
+    private void userPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userPasswordActionPerformed
+        if (String.valueOf(userPassword.getPassword()).isBlank() ||
+                 TextFieldManager.isHint(userPassword, passwordHint));
+        else if (userName.getText().isBlank() || TextFieldManager.isHint(userName, nameHint)) userName.requestFocus();
+        else if (userEmail.getText().isBlank() || TextFieldManager.isHint(userEmail, emailHint)) userEmail.requestFocus();
+        else signUpButton.doClick();
+    }//GEN-LAST:event_userPasswordActionPerformed
+
+    private void userEmail1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userEmail1ActionPerformed
+        if (userEmail1.getText().isBlank() || TextFieldManager.isHint(userEmail1, emailHint));
+        else if (String.valueOf(userPassword1.getPassword()).isBlank() ||
+                 TextFieldManager.isHint(userPassword1, passwordHint)) userPassword1.requestFocus();
+        else loginButton.doClick();
+    }//GEN-LAST:event_userEmail1ActionPerformed
+
+    private void userPassword1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userPassword1ActionPerformed
+        if (String.valueOf(userPassword1.getPassword()).isBlank() ||
+                 TextFieldManager.isHint(userPassword1, passwordHint));
+        else if (userEmail1.getText().isBlank() || TextFieldManager.isHint(userEmail1, emailHint)) userEmail1.requestFocus();
+        else loginButton.doClick();
+    }//GEN-LAST:event_userPassword1ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton forgetButton;
     private javax.swing.JPanel login;
     private app.buttons.MainButton loginButton;
     private javax.swing.JPanel register;

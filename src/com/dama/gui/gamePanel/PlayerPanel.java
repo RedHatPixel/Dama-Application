@@ -96,6 +96,15 @@ public final class PlayerPanel extends JPanel implements PlayerTimer.TimerListen
     }
     
     /**
+     * Check if the given parameter is pointing at the same player
+     * @param player    PlayerPanel
+     * @return Boolean
+     */
+    public boolean isSamePlayer(final PlayerPanel player) {
+        return this.getPlayerInfo().getName().equals(player.getPlayerInfo().getName());
+    }
+    
+    /**
      * Move the timer backward and display the result
      */
     public void moveTimerBackward() {

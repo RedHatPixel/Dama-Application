@@ -1,6 +1,7 @@
 package com.dama.gui.controlPanel;
 
-import app.customField.CompManager;
+import utilities.CompManager;
+import app.frames.MainFrame;
 import app.panels.CardHandlers.CardLayoutManager;
 import app.panels.CardHandlers.CardPanelRegistry;
 import app.panels.GamePlay;
@@ -8,9 +9,13 @@ import com.dama.gui._configurations.dependencies.Duration;
 import com.dama.gui._configurations.dependencies.Orientation;
 import com.dama.gui._configurations.game.GameBuilder;
 import com.dama.gui.gamePanel.TablePanel;
+import com.db.model.ModelHistory;
+import com.db.model.ModelProfile;
+import com.db.service.ServiceHistory;
 import utilities.FontManager;
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.SQLException;
 import javax.swing.*;
 
 public class MultiplayerSetting extends CardPanelRegistry {
@@ -18,6 +23,7 @@ public class MultiplayerSetting extends CardPanelRegistry {
     public MultiplayerSetting() {
         initComponents();
         init();
+        resetSelection();
         initialize();
         revalidate();
         repaint();
@@ -106,13 +112,19 @@ public class MultiplayerSetting extends CardPanelRegistry {
         checkLatestMove.setSelected(true);
         checkMove.setSelected(true);
         checkMovePiece.setSelected(false);
+        if (MainFrame.isInstance()) {
+            final MainFrame mainManager = MainFrame.getInstance();
+            final ModelProfile user = mainManager.getUserProfile();
+            if (mainManager.isLogin()) {
+                playerOneName.setText(user.getUserName());
+            }
+        }
     }
     
     private TablePanel setGameInformation() {
         final boolean playerOneError = limitStringCapacity(playerOneName);
         final boolean playerTwoError = limitStringCapacity(playerTwoName);
         if (playerOneError || playerTwoError) return null;
-
         final GameBuilder builder = new GameBuilder();
         final String selectedColor = SelectedColor.getSelection() != null ?
             SelectedColor.getSelection().getActionCommand() : 
@@ -159,6 +171,64 @@ public class MultiplayerSetting extends CardPanelRegistry {
         return builder.build();
     }
     
+    private TablePanel setPreviousGameInformation() {
+        try {
+            if (!MainFrame.isInstance()) return null;
+            final MainFrame mainManager = MainFrame.getInstance();
+            final ModelProfile user = mainManager.getUserProfile();
+            ModelHistory gameHistory;
+            String playerName;
+            
+            if (mainManager.isLogin()) {
+                playerName = user.getUserName();
+                final ServiceHistory history = mainManager.getServiceHistory();
+                if (history.isConnectionValid()) {
+                    gameHistory = history.getLatestGame(user.getUserID());
+                } else {
+                    final int size = mainManager.getLocalHistory().size();
+                    gameHistory = mainManager.getLocalHistory().isEmpty() ?
+                            null : mainManager.getLocalHistory().get(size < 1 ? 0 : size - 1);
+                }
+            } else {
+                playerName = "Guest";
+                final int size = mainManager.getLocalHistory().size();
+                gameHistory = mainManager.getLocalHistory().isEmpty() ?
+                            null : mainManager.getLocalHistory().get(size < 1 ? 0 : size - 1);
+            }
+            
+            if (gameHistory != null) {
+                final GameBuilder builder = new GameBuilder();
+                builder.setOrientation(Orientation.RANDOM);
+                final String gameType = gameHistory.getGameType();
+                if (gameType != null) {
+                    switch (gameType) {
+                        case "Bullet" -> {
+                            builder.setTimerDuration(Duration.BULLET);
+                        }
+                        case "Blitz" -> {
+                            builder.setTimerDuration(Duration.BLITZ);
+                        }
+                        case "Rapid" -> {
+                            builder.setTimerDuration(Duration.RAPID);
+                        }
+                        case "Infinite" -> {
+                            builder.setTimerDuration(Duration.INFINITE);
+                        }
+                    }
+                } else {
+                    builder.setTimerDuration(Duration.BLITZ);
+                } 
+                builder.setPlayersName(playerTwoName.getText(), playerName);
+                builder.isPlayable(true);
+                return builder.build();
+            }
+        } catch (SQLException e) {
+            System.err.println("Something went wrong while loading a new game -> MultiplayerSetting line 80");
+            System.out.println("Error: " + e.getMessage());
+        }
+        return setGameInformation();
+    }
+    
     public void createNewGame(final TablePanel table) {
         if (CardPanelRegistry.isInstanced(GamePlay.class)) {
             CardPanelRegistry.getInstance(GamePlay.class).makeNewTable(table);
@@ -172,6 +242,11 @@ public class MultiplayerSetting extends CardPanelRegistry {
     
     public void replayNewGame() {
         final TablePanel table = setGameInformation();
+        createNewGame(table);
+    }
+    
+    public void createPreviousGame() {
+        final TablePanel table = setPreviousGameInformation();
         createNewGame(table);
     }
     

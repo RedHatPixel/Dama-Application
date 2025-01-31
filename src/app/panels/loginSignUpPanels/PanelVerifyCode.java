@@ -1,7 +1,7 @@
 package app.panels.loginSignUpPanels;
 
-import app.customField.CompManager;
-import app.customField.TextFieldManager;
+import utilities.CompManager;
+import utilities.TextFieldManager;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -32,6 +32,10 @@ public class PanelVerifyCode extends JPanel {
     
     public void addEventButtonOK(final ActionListener event) {
         okButton.addActionListener(event);
+    }
+    
+    public void addEventButtonCancel(final ActionListener event) {
+        cancelButton.addActionListener(event);
     }
     
     @Override

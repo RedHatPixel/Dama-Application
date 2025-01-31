@@ -90,11 +90,11 @@ public class SoundManager {
         // Initialize Each Sounds
         static {
             try {
-                BACKGROUND_MUSIC = loadSound("src/resources/sounds/background_music.wav");
-                MOVE_PIECE_SOUNDS = loadSound("src/resources/sounds/move_piece.wav");
-                MOVE_CAPTURE_SOUND = loadSound("src/resources/sounds/stationary_kill.wav");
-                GAME_START_SOUND = loadSound("src/resources/sounds/game_start.wav");
-                GAME_END_SOUND =   loadSound("src/resources/sounds/game_end.wav");
+                BACKGROUND_MUSIC = loadSound("resources/sounds/background_music.wav");
+                MOVE_PIECE_SOUNDS = loadSound("resources/sounds/move_piece.wav");
+                MOVE_CAPTURE_SOUND = loadSound("resources/sounds/stationary_kill.wav");
+                GAME_START_SOUND = loadSound("resources/sounds/game_start.wav");
+                GAME_END_SOUND =   loadSound("resources/sounds/game_end.wav");
                 
             } catch (Exception e) {
                 System.err.println("Error initializing sounds: " + e.getMessage());

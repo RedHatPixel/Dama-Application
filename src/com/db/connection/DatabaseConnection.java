@@ -1,7 +1,10 @@
 package com.db.connection;
 
-import com.mysql.jdbc.Connection;
-import com.mysql.jdbc.exceptions.MySQLDataException;
+import com.db.service.Service;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.DriverManager;
+import java.util.List;
 
 public class DatabaseConnection {
     
@@ -15,20 +18,55 @@ public class DatabaseConnection {
         return instance;
     }
     
-    private DatabaseConnection() {
-        
+    private DatabaseConnection() {}
+    
+    public void reconnect(final Service service) {
+        try {
+            if (!isConnectionValid()) {
+                connectToDatabase();
+            }
+            service.setConnection(connection);
+        } catch (SQLException e) { 
+            System.err.println("Reconnection failed");
+        }
     }
     
-    public void connectToDatabase() throws MySQLDataException {
+    public void reconnect(final List<Service> services) {
+        try {
+            if (!isConnectionValid()) {
+                connectToDatabase();
+            }
+            for (final Service service : services) {
+                service.setConnection(connection);
+            }
+        } catch (SQLException e) { 
+            System.err.println("Reconnection failed");
+        }
+    }
+    
+    public boolean isConnectionValid() {
+        try {
+            return connection != null && !connection.isClosed() && connection.isValid(5);
+        } catch (SQLException e) {
+            return false;
+        }
+    }
+    
+    public boolean tryConnectionIfValid() {
+        try {
+            connectToDatabase();
+            return connection != null && !connection.isClosed() && connection.isValid(5);
+        } catch (SQLException e) {
+            return false;
+        }
+    }
+    
+    public void connectToDatabase() throws SQLException {
         final String database = "dama";
         final String userName = "camar";
         final String password = "camar123456";
-        final String url = "jdbc:mysql://localhost:3305/" + database;
-        
-//        
-//        // Initialize the connection
-//        connection = 
-//        System.out.println("Database connection established successfully!");
+        final String url = "jdbc:mysql://localhost:3306/" + database;
+        connection = DriverManager.getConnection(url, userName, password);
     }
     
     public Connection getConnection() {

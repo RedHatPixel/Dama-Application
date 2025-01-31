@@ -1,6 +1,5 @@
 package com.db.model;
 
-
 public class ModelUser {
 
     private int userID;
